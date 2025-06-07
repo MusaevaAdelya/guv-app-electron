@@ -1,0 +1,34 @@
+# Node modules
+**/node_modules/
+.pnpm-debug.log*
+
+# Build output
+dist/
+out/
+build/
+*.log
+*.tsbuildinfo
+
+# Vite
+react-app/.vite/
+react-app/dist/
+
+# Electron build artifacts
+electron-app/dist/
+electron-app/out/
+electron-app/*.log
+
+# TypeScript
+**/*.tsbuildinfo
+
+# System files
+.DS_Store
+Thumbs.db
+
+# VSCode settings
+.vscode/
+*.code-workspace
+
+# Environment variables
+.env
+.env.*
