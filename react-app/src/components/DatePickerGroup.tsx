@@ -5,7 +5,7 @@ import CustomDatePicker from "./CustomDatePicker";
 function DatePickerGroup() {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <div className="flex gap-0">
+      <div className="flex gap-0 ">
         <CustomDatePicker borderRadius="15px 0px 0px 15px" label="Von"/>
         <CustomDatePicker borderRadius="0px 15px 15px 0px" label="Bis"/>
       </div>

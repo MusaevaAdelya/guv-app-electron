@@ -1,6 +1,7 @@
 import Header from "./layout/Header";
 import ResultSection from "./layout/ResultSection";
 import { createTheme, ThemeProvider } from "@mui/material";
+import ChartsSection from "./layout/ChartsSection";
 
 const theme = createTheme({
   typography: {
@@ -11,11 +12,12 @@ const theme = createTheme({
 function App() {
   return (
     <ThemeProvider theme={theme}>
-      <main className="bg-background rounded-4xl md:p-8 p-2">
-        <div className="container mx-auto">
+      <main className="bg-background rounded-4xl py-9">
+        <div className="container mx-auto ">
           <Header />
           <ResultSection />
         </div>
+        <ChartsSection/>
       </main>
     </ThemeProvider>
   );
