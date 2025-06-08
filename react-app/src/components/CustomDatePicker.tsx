@@ -15,13 +15,12 @@ function CustomDatePicker({
       slotProps={{
         textField: {
           sx: {
-            // Стили для label
             "& .MuiInputLabel-root": {
               fontSize: "1.2rem",
             },
             "& .MuiInputLabel-root.Mui-focused": {
-              fontSize: "1.2rem",
-            },
+              fontSize: "1.3rem",
+            }
           },
           InputProps: {
             sx: {

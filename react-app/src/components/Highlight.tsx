@@ -7,7 +7,7 @@ type HightlightProps=Props &{
 
 function Highlight({children, color}:HightlightProps) {
   return (
-    <span className={`bg-${color}/70 rounded-4xl p-1`}>{children}</span>
+    <span className="rounded-4xl p-1" style={{backgroundColor: `color-mix(in srgb, ${color} 70%, transparent)`}}>{children}</span>
   )
 }
 
