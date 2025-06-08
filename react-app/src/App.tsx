@@ -1,22 +1,22 @@
-import { useEffect } from "react";
-import { useAppSelector, useAppDispatch } from "./redux/store";
-import { toggleTheme } from "./redux/themeSlice";
+import Header from "./layout/Header";
+import {
+  createTheme,
+  ThemeProvider
+} from "@mui/material";
+
+const theme = createTheme({
+  typography: {
+    fontFamily: 'var(--font-base)', // Replace with your desired font
+  },
+});
 
 function App() {
-  const darkMode = useAppSelector((state) => state.theme.darkMode);
-  const dispatch = useAppDispatch();
-
-  useEffect(() => {
-    document.documentElement.classList.toggle("dark", darkMode);
-  }, [darkMode]);
-
   return (
-    <div className="bg-primary text-black">
-      <button onClick={() => dispatch(toggleTheme())}>
-        {darkMode ? "🌙 Dark" : "☀️ Light"}
-      </button>
-
-    </div>
+    <ThemeProvider theme={theme}>
+      <main className="bg-background rounded-4xl p-8">
+        <Header></Header>
+      </main>
+    </ThemeProvider>
   );
 }
 
