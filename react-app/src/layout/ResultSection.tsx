@@ -30,12 +30,12 @@ function ResultSection() {
       <ResultBanner
         title="Brutto"
         value="20.000 €"
-        classStyle="rounded-l-3xl border-2 border-dashed border-accent-2 flex-1"
+        classStyle="rounded-l-3xl border-3 border-dashed border-accent-2 flex-1"
         />
       <ResultBanner
         title="Netto"
         value="20.000 €"
-        classStyle="rounded-r-3xl border-2 border-dashed border-accent flex-1"
+        classStyle="rounded-r-3xl border-3 border-dashed border-accent flex-1"
         />
         </BannerGroup>
     </section>

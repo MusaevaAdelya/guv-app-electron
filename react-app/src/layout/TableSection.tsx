@@ -1,6 +1,7 @@
 import SearchField from "../components/SearchField";
 import AddIcon from "@mui/icons-material/Add";
 import ExpensesTable from "../components/ExpensesTable";
+import Pagination from "@mui/material/Pagination";
 
 function TableSection() {
   return (
@@ -19,7 +20,25 @@ function TableSection() {
           </button>
         </div>
       </div>
-      <ExpensesTable/>
+      <ExpensesTable />
+      <div className=" flex mt-7 justify-between">
+        <p className="text-lg">10 of 456 items</p>
+        <Pagination
+          count={10}
+          sx={{
+            "& .MuiPaginationItem-root": {
+              fontSize: "1.2rem",
+            },
+            "& .MuiPaginationItem-root.Mui-selected": {
+              backgroundColor: "black",
+              color: "white",
+              "&:hover": {
+                backgroundColor: "#333",
+              },
+            },
+          }}
+        />
+      </div>
     </section>
   );
 }
