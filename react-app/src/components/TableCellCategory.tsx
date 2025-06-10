@@ -23,7 +23,7 @@ function TableCellCategory({ title, type }: TableCellCategory) {
   return (
     <div className="flex justify-end">
 
-    <p className="py-0.5 px-5 rounded-2xl font-bold" style={{ backgroundColor: `rgba(${hexToRgb(color)}, 0.3)` }}>
+    <p className="py-0.5 px-5 rounded-2xl font-bold" style={{ backgroundColor: `rgba(${hexToRgb(color)}, 0.2)` }}>
       <span style={{ color }}>{title}</span>
     </p>
     </div>

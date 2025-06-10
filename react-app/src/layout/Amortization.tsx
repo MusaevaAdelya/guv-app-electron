@@ -1,21 +1,19 @@
 import SearchField from "../components/SearchField";
-import ExpensesTable from "../components/ExpensesTable";
+import AmortizationTable from "../components/AmortizationTable";
 import Pagination from "@mui/material/Pagination";
-import AddRecordButtonModal from "../components/AddRecordButtonModal";
-import AddCategoryButtonModal from "../components/AddCategoryButtonModal";
+import AddAmortizationButtonModal from "../components/AddAmortizationButtonModal";
 
-function TableSection() {
+function Amortization() {
   return (
     <section className="bg-white shadow-xl min-h-[50vh] my-10 p-9 rounded-3xl">
-      <p className="text-2xl  font-bold mb-5">Income and Expenses</p>
+      <p className="text-2xl  font-bold mb-5">Amortization</p>
       <div className="flex justify-between  mb-7">
         <SearchField />
         <div className=" flex items-center gap-2">
-          <AddRecordButtonModal/>
-          <AddCategoryButtonModal/>
+          <AddAmortizationButtonModal/>
         </div>
       </div>
-      <ExpensesTable />
+      <AmortizationTable />
       <div className=" flex mt-7 justify-between">
         <p className="text-lg">10 of 456 items</p>
         <Pagination
@@ -35,7 +33,7 @@ function TableSection() {
         />
       </div>
     </section>
-  );
+  )
 }
 
-export default TableSection;
+export default Amortization

@@ -3,6 +3,7 @@ import ResultSection from "./layout/ResultSection";
 import { createTheme, ThemeProvider } from "@mui/material";
 import ChartsSection from "./layout/ChartsSection";
 import TableSection from "./layout/TableSection";
+import Amortization from "./layout/Amortization";
 
 const theme = createTheme({
   typography: {
@@ -21,6 +22,7 @@ function App() {
         <ChartsSection/>
         <div className="container mx-auto p-9">
           <TableSection/>
+          <Amortization/>
         </div>
       </main>
     </ThemeProvider>
