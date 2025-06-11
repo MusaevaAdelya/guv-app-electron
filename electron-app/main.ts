@@ -1,16 +1,19 @@
-import { app, BrowserWindow } from 'electron';
+
 import * as path from 'path';
+const { app, BrowserWindow, screen } = require('electron');
 
 const createWindow = () => {
+  const { width, height } = screen.getPrimaryDisplay().workAreaSize;
+
   const win = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width,
+    height,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
     },
   });
 
-  win.loadURL('http://localhost:5173'); // Vite's default port
+  win.loadURL('http://localhost:5173'); 
 };
 
 app.whenReady().then(() => {

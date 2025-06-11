@@ -2,10 +2,12 @@ import { configureStore } from "@reduxjs/toolkit";
 import themeReducer from "./themeSlice";
 import { useDispatch, useSelector } from "react-redux";
 import type { TypedUseSelectorHook } from "react-redux";
+import guvReducer from './guvSlice';
 
 export const store = configureStore({
   reducer: {
     theme: themeReducer,
+    guv:guvReducer
   },
 });
 

@@ -7,7 +7,7 @@ import Amortization from "./layout/Amortization";
 
 const theme = createTheme({
   typography: {
-    fontFamily: "var(--font-base)", // Replace with your desired font
+    fontFamily: "var(--font-base)", 
   },
 });
 
