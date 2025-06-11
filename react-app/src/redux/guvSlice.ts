@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type {PayloadAction} from '@reduxjs/toolkit';
+import type { AppDispatch } from './store';
 
 interface GuvState {
   from: string | null;
@@ -26,3 +27,11 @@ const guvSlice = createSlice({
 
 export const { setFrom, setTo } = guvSlice.actions;
 export default guvSlice.reducer;
+
+export const setDateFrom = (date: string | null) => (dispatch: AppDispatch) => {
+  dispatch(setFrom(date));
+};
+
+export const setDateTo = (date: string | null) => (dispatch: AppDispatch) => {
+  dispatch(setTo(date));
+};
