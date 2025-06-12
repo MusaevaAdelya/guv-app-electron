@@ -3,11 +3,13 @@ import themeReducer from "./themeSlice";
 import { useDispatch, useSelector } from "react-redux";
 import type { TypedUseSelectorHook } from "react-redux";
 import guvReducer from './guvSlice';
+import entriesReducer from './entriesSlice';
 
 export const store = configureStore({
   reducer: {
     theme: themeReducer,
-    guv:guvReducer
+    guv:guvReducer,
+    entries: entriesReducer,
   },
 });
 

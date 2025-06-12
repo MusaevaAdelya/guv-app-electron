@@ -1,0 +1,560 @@
+{
+  "kategorien": [
+    {
+      "id": "56f6176f-7a97-43f4-8cf4-4eea1d14c80a",
+      "type": "einnahme",
+      "name": "Verkauf Software"
+    },
+    {
+      "id": "7a735aa2-a4d8-4212-b682-20c887390910",
+      "type": "einnahme",
+      "name": "Beratung"
+    },
+    {
+      "id": "6dbc57bc-8f17-4208-89c8-442b64a3e1cf",
+      "type": "ausgabe",
+      "name": "Miete"
+    },
+    {
+      "id": "d4c5bc9e-d702-4103-867d-43fb125d1287",
+      "type": "ausgabe",
+      "name": "Serverkosten"
+    },
+    {
+      "id": "3ae13d2a-fda0-43ce-870c-63fefaf1b65e",
+      "type": "abschreibung",
+      "name": "Laptop"
+    },
+    {
+      "id": "8b65dd8a-1ba7-4c50-ae4c-ef55f9b3a5c5",
+      "type": "abschreibung",
+      "name": "B\u00fcroeinrichtung"
+    }
+  ],
+  "einnahmen": [
+    {
+      "id": "fa0be4be-133f-4694-a2b0-c824d1a00aba",
+      "datum": "2025-02-05",
+      "betrag": 3657.29,
+      "kategorie": "7a735aa2-a4d8-4212-b682-20c887390910",
+      "umsatzsteuer": 1171.39,
+      "title": "CRM Lizenz"
+    },
+    {
+      "id": "f3774be6-d9fd-4d4c-9f18-3f54d79da1ad",
+      "datum": "2024-02-04",
+      "betrag": 4077.25,
+      "kategorie": "7a735aa2-a4d8-4212-b682-20c887390910",
+      "umsatzsteuer": 278.39,
+      "title": "App Verkauf"
+    },
+    {
+      "id": "4db142dd-fd98-403c-ad2a-240dda8ac7a4",
+      "datum": "2024-05-03",
+      "betrag": 3578.34,
+      "kategorie": "56f6176f-7a97-43f4-8cf4-4eea1d14c80a",
+      "umsatzsteuer": 1308.36,
+      "title": "Beratung Security"
+    },
+    {
+      "id": "18c0f54d-d913-46f0-b652-a82aed2c539a",
+      "datum": "2024-06-18",
+      "betrag": 6781.31,
+      "kategorie": "7a735aa2-a4d8-4212-b682-20c887390910",
+      "umsatzsteuer": 1135.05,
+      "title": "Webshop Entwicklung"
+    },
+    {
+      "id": "780d04ab-5d1f-480e-9d05-81f3d4685963",
+      "datum": "2025-01-05",
+      "betrag": 4936.9,
+      "kategorie": "56f6176f-7a97-43f4-8cf4-4eea1d14c80a",
+      "umsatzsteuer": 628.27,
+      "title": "Webshop Entwicklung"
+    },
+    {
+      "id": "75459b35-a27b-409b-b6d5-44517843cefe",
+      "datum": "2024-10-22",
+      "betrag": 6209.69,
+      "kategorie": "56f6176f-7a97-43f4-8cf4-4eea1d14c80a",
+      "umsatzsteuer": 1435.31,
+      "title": "Support Vertrag"
+    },
+    {
+      "id": "84bfec3f-a533-4796-b5d7-0418410785ae",
+      "datum": "2024-04-07",
+      "betrag": 6074.61,
+      "kategorie": "56f6176f-7a97-43f4-8cf4-4eea1d14c80a",
+      "umsatzsteuer": 720.0,
+      "title": "Support Vertrag"
+    },
+    {
+      "id": "d38a4f24-0ca1-4bdb-86ef-ff4c4affd70d",
+      "datum": "2024-07-16",
+      "betrag": 7689.53,
+      "kategorie": "56f6176f-7a97-43f4-8cf4-4eea1d14c80a",
+      "umsatzsteuer": 446.94,
+      "title": "Support Vertrag"
+    },
+    {
+      "id": "1589c945-ac00-4bcc-94f2-d4bb47e76b01",
+      "datum": "2024-02-07",
+      "betrag": 7434.59,
+      "kategorie": "7a735aa2-a4d8-4212-b682-20c887390910",
+      "umsatzsteuer": 1091.48,
+      "title": "Beratung Security"
+    },
+    {
+      "id": "b38ffa44-b29d-4f65-8d5b-1dfe0c7cffd4",
+      "datum": "2024-12-12",
+      "betrag": 7683.59,
+      "kategorie": "56f6176f-7a97-43f4-8cf4-4eea1d14c80a",
+      "umsatzsteuer": 906.98,
+      "title": "CRM Lizenz"
+    },
+    {
+      "id": "500d3ac0-e054-4547-9ce9-fc0aa40030cb",
+      "datum": "2024-01-07",
+      "betrag": 4073.82,
+      "kategorie": "7a735aa2-a4d8-4212-b682-20c887390910",
+      "umsatzsteuer": 1393.72,
+      "title": "Support Vertrag"
+    },
+    {
+      "id": "c2b0684d-a3cf-47b8-8844-b1eec0d94746",
+      "datum": "2024-05-13",
+      "betrag": 8818.53,
+      "kategorie": "7a735aa2-a4d8-4212-b682-20c887390910",
+      "umsatzsteuer": 238.99,
+      "title": "Beratung Security"
+    },
+    {
+      "id": "07b1f6e5-3be9-4ac4-8184-e88917c5764b",
+      "datum": "2024-12-17",
+      "betrag": 3746.66,
+      "kategorie": "7a735aa2-a4d8-4212-b682-20c887390910",
+      "umsatzsteuer": 123.18,
+      "title": "Beratung Security"
+    },
+    {
+      "id": "2a4e6c0d-b9ab-4142-b862-ada9b415ea20",
+      "datum": "2025-04-27",
+      "betrag": 1004.16,
+      "kategorie": "56f6176f-7a97-43f4-8cf4-4eea1d14c80a",
+      "umsatzsteuer": 441.6,
+      "title": "Beratung Security"
+    },
+    {
+      "id": "bf043c30-e342-4c7d-8cc4-e8bfa85f9b8c",
+      "datum": "2024-02-14",
+      "betrag": 4183.6,
+      "kategorie": "56f6176f-7a97-43f4-8cf4-4eea1d14c80a",
+      "umsatzsteuer": 1229.62,
+      "title": "CRM Lizenz"
+    },
+    {
+      "id": "08a9cf64-25fd-4672-a153-9e003e91570d",
+      "datum": "2024-12-06",
+      "betrag": 1536.72,
+      "kategorie": "7a735aa2-a4d8-4212-b682-20c887390910",
+      "umsatzsteuer": 688.98,
+      "title": "Webshop Entwicklung"
+    },
+    {
+      "id": "3d820a08-20d3-417d-9536-94dfde9ec620",
+      "datum": "2024-08-04",
+      "betrag": 3724.47,
+      "kategorie": "7a735aa2-a4d8-4212-b682-20c887390910",
+      "umsatzsteuer": 1162.43,
+      "title": "Webshop Entwicklung"
+    },
+    {
+      "id": "9c850353-cd22-4edd-8c8a-38c733607e14",
+      "datum": "2024-06-19",
+      "betrag": 1187.43,
+      "kategorie": "7a735aa2-a4d8-4212-b682-20c887390910",
+      "umsatzsteuer": 651.93,
+      "title": "App Verkauf"
+    },
+    {
+      "id": "3d5c69a8-c947-4f4e-8f83-274ce7c34d56",
+      "datum": "2024-08-12",
+      "betrag": 2389.04,
+      "kategorie": "7a735aa2-a4d8-4212-b682-20c887390910",
+      "umsatzsteuer": 735.84,
+      "title": "Webshop Entwicklung"
+    },
+    {
+      "id": "f4534c27-c935-4f9e-9ae3-7ea31b42cd18",
+      "datum": "2024-07-07",
+      "betrag": 8575.31,
+      "kategorie": "7a735aa2-a4d8-4212-b682-20c887390910",
+      "umsatzsteuer": 763.71,
+      "title": "Support Vertrag"
+    }
+  ],
+  "ausgaben": [
+    {
+      "id": "94563be4-add9-4fb8-95c5-2dd42bc2da15",
+      "datum": "2024-11-12",
+      "betrag": 1368.69,
+      "umsatzsteuer": 503.68,
+      "kategorie": "d4c5bc9e-d702-4103-867d-43fb125d1287",
+      "title": "Cloud-Server"
+    },
+    {
+      "id": "66ff0b1a-bfdd-4f7f-ad2a-1333cfaf8e9f",
+      "datum": "2024-03-19",
+      "betrag": 334.18,
+      "umsatzsteuer": 479.59,
+      "kategorie": "d4c5bc9e-d702-4103-867d-43fb125d1287",
+      "title": "Versicherung"
+    },
+    {
+      "id": "f8b58944-2ddc-4c36-9df5-4e45b39614d7",
+      "datum": "2024-06-04",
+      "betrag": 1565.5,
+      "umsatzsteuer": 95.38,
+      "kategorie": "d4c5bc9e-d702-4103-867d-43fb125d1287",
+      "title": "Internet"
+    },
+    {
+      "id": "8a76303d-3caf-430b-9187-7bcb739dddbc",
+      "datum": "2024-02-10",
+      "betrag": 1336.37,
+      "umsatzsteuer": 533.6,
+      "kategorie": "d4c5bc9e-d702-4103-867d-43fb125d1287",
+      "title": "Versicherung"
+    },
+    {
+      "id": "7b2a7ec8-5e44-48bb-b728-58e3c87068e2",
+      "datum": "2025-05-14",
+      "betrag": 2901.24,
+      "umsatzsteuer": 137.11,
+      "kategorie": "6dbc57bc-8f17-4208-89c8-442b64a3e1cf",
+      "title": "Internet"
+    },
+    {
+      "id": "de41c3d0-f600-4c32-a9b3-f333bedb6b8b",
+      "datum": "2024-04-11",
+      "betrag": 506.74,
+      "umsatzsteuer": 175.22,
+      "kategorie": "d4c5bc9e-d702-4103-867d-43fb125d1287",
+      "title": "Cloud-Server"
+    },
+    {
+      "id": "f74ad9ed-c360-4661-a26b-1b028f1c451d",
+      "datum": "2024-06-20",
+      "betrag": 827.1,
+      "umsatzsteuer": 318.33,
+      "kategorie": "d4c5bc9e-d702-4103-867d-43fb125d1287",
+      "title": "Internet"
+    },
+    {
+      "id": "747ba770-42a0-4d56-9e13-430594c596fd",
+      "datum": "2025-01-18",
+      "betrag": 1975.88,
+      "umsatzsteuer": 72.76,
+      "kategorie": "d4c5bc9e-d702-4103-867d-43fb125d1287",
+      "title": "Cloud-Server"
+    },
+    {
+      "id": "fdc015ec-beef-43d0-9b4b-1f4ced87b193",
+      "datum": "2024-02-29",
+      "betrag": 500.09,
+      "umsatzsteuer": 182.88,
+      "kategorie": "d4c5bc9e-d702-4103-867d-43fb125d1287",
+      "title": "Versicherung"
+    },
+    {
+      "id": "beb2dbda-1383-4291-a251-1032b54335ad",
+      "datum": "2024-01-20",
+      "betrag": 2557.71,
+      "umsatzsteuer": 497.84,
+      "kategorie": "6dbc57bc-8f17-4208-89c8-442b64a3e1cf",
+      "title": "Cloud-Server"
+    },
+    {
+      "id": "a96504bf-e067-4934-a08d-89adb1bef508",
+      "datum": "2024-04-30",
+      "betrag": 687.04,
+      "umsatzsteuer": 188.38,
+      "kategorie": "d4c5bc9e-d702-4103-867d-43fb125d1287",
+      "title": "Cloud-Server"
+    },
+    {
+      "id": "ea32c8ca-8d7f-491d-b9ce-6f151e694a4c",
+      "datum": "2025-04-03",
+      "betrag": 513.45,
+      "umsatzsteuer": 523.17,
+      "kategorie": "d4c5bc9e-d702-4103-867d-43fb125d1287",
+      "title": "Versicherung"
+    },
+    {
+      "id": "47d7d42e-2e5b-4bec-989c-7a69b6f45527",
+      "datum": "2024-02-29",
+      "betrag": 602.62,
+      "umsatzsteuer": 566.64,
+      "kategorie": "6dbc57bc-8f17-4208-89c8-442b64a3e1cf",
+      "title": "B\u00fcromiete"
+    },
+    {
+      "id": "b7d8da8f-66f8-4d37-909e-03210cd73e7d",
+      "datum": "2025-02-09",
+      "betrag": 1742.17,
+      "umsatzsteuer": 581.15,
+      "kategorie": "6dbc57bc-8f17-4208-89c8-442b64a3e1cf",
+      "title": "Versicherung"
+    },
+    {
+      "id": "1cd7a052-b2b3-4fcd-a9bf-dfe7ef09190d",
+      "datum": "2024-01-27",
+      "betrag": 1342.92,
+      "umsatzsteuer": 531.49,
+      "kategorie": "6dbc57bc-8f17-4208-89c8-442b64a3e1cf",
+      "title": "Strom"
+    },
+    {
+      "id": "8933655d-9bd3-417a-b5dd-53753167e2ff",
+      "datum": "2024-01-26",
+      "betrag": 1135.03,
+      "umsatzsteuer": 125.22,
+      "kategorie": "6dbc57bc-8f17-4208-89c8-442b64a3e1cf",
+      "title": "Internet"
+    },
+    {
+      "id": "589a5871-0494-47e6-ab08-813f47791fee",
+      "datum": "2024-09-21",
+      "betrag": 639.12,
+      "umsatzsteuer": 556.24,
+      "kategorie": "d4c5bc9e-d702-4103-867d-43fb125d1287",
+      "title": "Internet"
+    },
+    {
+      "id": "ee80ce87-0577-4484-8fac-2c6e885e6f3b",
+      "datum": "2024-07-13",
+      "betrag": 2269.4,
+      "umsatzsteuer": 418.83,
+      "kategorie": "6dbc57bc-8f17-4208-89c8-442b64a3e1cf",
+      "title": "Internet"
+    },
+    {
+      "id": "c0a2ae36-59b9-42f7-a59f-56cb4f26bfa4",
+      "datum": "2024-01-30",
+      "betrag": 217.81,
+      "umsatzsteuer": 598.06,
+      "kategorie": "6dbc57bc-8f17-4208-89c8-442b64a3e1cf",
+      "title": "Strom"
+    },
+    {
+      "id": "4077b8e6-e622-42c2-98fa-3e90cca1d876",
+      "datum": "2024-07-12",
+      "betrag": 2327.97,
+      "umsatzsteuer": 101.06,
+      "kategorie": "6dbc57bc-8f17-4208-89c8-442b64a3e1cf",
+      "title": "Versicherung"
+    }
+  ],
+  "abschreibungen": [
+    {
+      "id": "5f7579ba-c17e-42ca-8bc1-37009ac401c3",
+      "name": "iMac",
+      "kosten": 1241.32,
+      "dauer": 12,
+      "start_datum": "2025-02-27",
+      "restwert": 805.88,
+      "restdauer": 6,
+      "kategorie": "3ae13d2a-fda0-43ce-870c-63fefaf1b65e"
+    },
+    {
+      "id": "3a42bcbc-5aa7-4ebf-b375-ef5fa8267c7d",
+      "name": "Regal",
+      "kosten": 1466.75,
+      "dauer": 36,
+      "start_datum": "2024-08-24",
+      "restwert": 1567.87,
+      "restdauer": 6,
+      "kategorie": "8b65dd8a-1ba7-4c50-ae4c-ef55f9b3a5c5"
+    },
+    {
+      "id": "45c72588-5e7d-46a6-aa8f-86306d945dfd",
+      "name": "iMac",
+      "kosten": 2197.29,
+      "dauer": 36,
+      "start_datum": "2024-05-05",
+      "restwert": 827.91,
+      "restdauer": 18,
+      "kategorie": "3ae13d2a-fda0-43ce-870c-63fefaf1b65e"
+    },
+    {
+      "id": "ea5552d6-d5e9-454a-860c-2a4fa05fbce6",
+      "name": "Schreibtisch",
+      "kosten": 1138.28,
+      "dauer": 12,
+      "start_datum": "2024-10-31",
+      "restwert": 1021.02,
+      "restdauer": 18,
+      "kategorie": "3ae13d2a-fda0-43ce-870c-63fefaf1b65e"
+    },
+    {
+      "id": "e6fc87e9-d063-4316-9391-249d099eee81",
+      "name": "MacBook Pro",
+      "kosten": 1496.38,
+      "dauer": 24,
+      "start_datum": "2024-01-31",
+      "restwert": 1959.44,
+      "restdauer": 12,
+      "kategorie": "3ae13d2a-fda0-43ce-870c-63fefaf1b65e"
+    },
+    {
+      "id": "76935701-eb00-412d-b372-fec0b5e82bd2",
+      "name": "B\u00fcrostuhl",
+      "kosten": 541.88,
+      "dauer": 24,
+      "start_datum": "2024-09-22",
+      "restwert": 529.21,
+      "restdauer": 3,
+      "kategorie": "3ae13d2a-fda0-43ce-870c-63fefaf1b65e"
+    },
+    {
+      "id": "a4e628ee-ee41-427b-8e32-608ba119521b",
+      "name": "MacBook Pro",
+      "kosten": 1173.6,
+      "dauer": 36,
+      "start_datum": "2024-08-20",
+      "restwert": 1134.15,
+      "restdauer": 18,
+      "kategorie": "8b65dd8a-1ba7-4c50-ae4c-ef55f9b3a5c5"
+    },
+    {
+      "id": "a84bbcc5-de83-4331-88c9-6f065baf806d",
+      "name": "Monitor",
+      "kosten": 1755.01,
+      "dauer": 36,
+      "start_datum": "2024-12-29",
+      "restwert": 1960.9,
+      "restdauer": 18,
+      "kategorie": "3ae13d2a-fda0-43ce-870c-63fefaf1b65e"
+    },
+    {
+      "id": "c9e5e916-911a-4596-807f-14071810866f",
+      "name": "iMac",
+      "kosten": 2958.23,
+      "dauer": 36,
+      "start_datum": "2024-03-20",
+      "restwert": 1479.56,
+      "restdauer": 18,
+      "kategorie": "3ae13d2a-fda0-43ce-870c-63fefaf1b65e"
+    },
+    {
+      "id": "20a60eab-bdc3-4282-843e-0c22d81e37ce",
+      "name": "Monitor",
+      "kosten": 2433.9,
+      "dauer": 12,
+      "start_datum": "2024-04-30",
+      "restwert": 821.54,
+      "restdauer": 3,
+      "kategorie": "8b65dd8a-1ba7-4c50-ae4c-ef55f9b3a5c5"
+    },
+    {
+      "id": "167a0a0c-983c-4795-a5a0-d5a4b817b954",
+      "name": "Regal",
+      "kosten": 1646.65,
+      "dauer": 36,
+      "start_datum": "2024-09-30",
+      "restwert": 1991.5,
+      "restdauer": 6,
+      "kategorie": "3ae13d2a-fda0-43ce-870c-63fefaf1b65e"
+    },
+    {
+      "id": "fb2e0274-5ec5-401a-bd07-0f6ff724a2c7",
+      "name": "Regal",
+      "kosten": 2193.09,
+      "dauer": 36,
+      "start_datum": "2024-11-18",
+      "restwert": 1722.37,
+      "restdauer": 18,
+      "kategorie": "8b65dd8a-1ba7-4c50-ae4c-ef55f9b3a5c5"
+    },
+    {
+      "id": "63694635-399e-477c-9242-98a85eaa5c5f",
+      "name": "Surface Laptop",
+      "kosten": 2428.28,
+      "dauer": 24,
+      "start_datum": "2024-04-14",
+      "restwert": 1433.53,
+      "restdauer": 3,
+      "kategorie": "3ae13d2a-fda0-43ce-870c-63fefaf1b65e"
+    },
+    {
+      "id": "ecba1f1e-1596-4d19-82ab-99302c7df6a2",
+      "name": "Schreibtisch",
+      "kosten": 2548.46,
+      "dauer": 12,
+      "start_datum": "2024-08-01",
+      "restwert": 1429.78,
+      "restdauer": 6,
+      "kategorie": "8b65dd8a-1ba7-4c50-ae4c-ef55f9b3a5c5"
+    },
+    {
+      "id": "0b4f1c8a-6f02-448c-8246-c3433387896d",
+      "name": "Schreibtisch",
+      "kosten": 2712.42,
+      "dauer": 36,
+      "start_datum": "2025-02-19",
+      "restwert": 388.18,
+      "restdauer": 18,
+      "kategorie": "3ae13d2a-fda0-43ce-870c-63fefaf1b65e"
+    },
+    {
+      "id": "d5a5aaa5-da3d-4a23-8f68-a81a707da9e7",
+      "name": "Surface Laptop",
+      "kosten": 2668.69,
+      "dauer": 12,
+      "start_datum": "2025-03-30",
+      "restwert": 586.81,
+      "restdauer": 6,
+      "kategorie": "3ae13d2a-fda0-43ce-870c-63fefaf1b65e"
+    },
+    {
+      "id": "14db6c6a-e145-400d-9a35-77ccaddc9f2e",
+      "name": "Surface Laptop",
+      "kosten": 2333.37,
+      "dauer": 12,
+      "start_datum": "2024-07-07",
+      "restwert": 1615.21,
+      "restdauer": 12,
+      "kategorie": "3ae13d2a-fda0-43ce-870c-63fefaf1b65e"
+    },
+    {
+      "id": "8997b11a-1f6d-4157-93a0-3a90f6b6229d",
+      "name": "B\u00fcrostuhl",
+      "kosten": 2914.53,
+      "dauer": 12,
+      "start_datum": "2025-01-17",
+      "restwert": 1306.48,
+      "restdauer": 18,
+      "kategorie": "3ae13d2a-fda0-43ce-870c-63fefaf1b65e"
+    },
+    {
+      "id": "8b160a20-5b6f-4d63-b210-384265d075da",
+      "name": "Schreibtisch",
+      "kosten": 2443.42,
+      "dauer": 24,
+      "start_datum": "2024-08-10",
+      "restwert": 257.19,
+      "restdauer": 12,
+      "kategorie": "3ae13d2a-fda0-43ce-870c-63fefaf1b65e"
+    },
+    {
+      "id": "b01fc718-d920-4af6-8ddc-5f0abfb582c4",
+      "name": "MacBook Pro",
+      "kosten": 1141.98,
+      "dauer": 12,
+      "start_datum": "2024-12-10",
+      "restwert": 1190.27,
+      "restdauer": 6,
+      "kategorie": "8b65dd8a-1ba7-4c50-ae4c-ef55f9b3a5c5"
+    }
+  ]
+}

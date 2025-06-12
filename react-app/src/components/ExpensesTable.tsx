@@ -9,6 +9,10 @@ import Paper from "@mui/material/Paper";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import TableCellTitle from "./TableCellTitle";
 import TableCellCategory from "./TableCellCategory";
+import { useAppDispatch, useAppSelector } from '../redux/store';
+import { useEffect } from 'react';
+import { fetchEntries } from '../redux/entriesSlice';
+import dayjs from 'dayjs';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -31,26 +35,15 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-function createData(
-  name: string,
-  calories: number,
-  fat: number,
-  carbs: number,
-  protein: number,
-  type:"profit"|"loss"|"amortization"
-) {
-  return { name, calories, fat, carbs, protein, type };
-}
-
-const rows = [
-  createData("Frozen yoghurt", 159, 6.0, 24, 4.0,"amortization" ),
-  createData("Ice cream sandwich", 237, 9.0, 37, 4.3, "loss"),
-  createData("Eclair", 262, 16.0, 24, 6.0, "profit"),
-  createData("Cupcake", 305, 3.7, 67, 4.3, "profit"),
-  createData("Gingerbread", 356, 16.0, 49, 3.9, "loss"),
-];
 
 function ExpensesTable() {
+  const dispatch = useAppDispatch();
+  const { entries, page } = useAppSelector(state => state.entries);
+
+  useEffect(() => {
+    dispatch(fetchEntries(page));
+  }, [dispatch, page]);
+
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 700 }} aria-label="customized table">
@@ -65,15 +58,17 @@ function ExpensesTable() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
-            <StyledTableRow key={row.name}>
+          {entries.map((row) => (
+            <StyledTableRow key={row.id}>
               <StyledTableCell component="th" scope="row">
-                <TableCellTitle title={row.name} type={row.type} />
+                <TableCellTitle title={row.title} type={row.type} />
               </StyledTableCell>
-              <StyledTableCell align="right"><TableCellCategory title={row.calories.toString()} type={row.type}/></StyledTableCell>
-              <StyledTableCell align="right">{row.fat}</StyledTableCell>
-              <StyledTableCell align="right">{row.carbs}</StyledTableCell>
-              <StyledTableCell align="right">{row.protein}</StyledTableCell>
+              <StyledTableCell align="right">
+                <TableCellCategory title={row.kategorie} type={row.type} />
+              </StyledTableCell>
+              <StyledTableCell align="right">{row.betrag}</StyledTableCell>
+              <StyledTableCell align="right">{row.umsatzsteuer}</StyledTableCell>
+              <StyledTableCell align="right">{dayjs(row.datum).format('DD.MM.YYYY')}</StyledTableCell>
               <StyledTableCell align="right">
                 <div className="flex gap-4 justify-end">
                   <PencilIcon className="w-6 cursor-pointer hover:text-purple-500" />

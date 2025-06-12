@@ -15,12 +15,12 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <main className="bg-background rounded-4xl ">
-        <div className="container mx-auto p-9">
+        <div className="container mx-auto py-9">
           <Header />
           <ResultSection />
         </div>
         <ChartsSection/>
-        <div className="container mx-auto p-9">
+        <div className="container mx-auto py-9">
           <TableSection/>
           <Amortization/>
         </div>
