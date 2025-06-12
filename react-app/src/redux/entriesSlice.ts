@@ -35,49 +35,67 @@ export const fetchEntries = createAsyncThunk(
     const offset = (page - 1) * perPage;
 
     const [einnahmenRes, ausgabenRes, abschreibungenRes] = await Promise.all([
-      supabase.from('einnahmen').select('*').range(offset, offset + perPage - 1),
-      supabase.from('ausgaben').select('*').range(offset, offset + perPage - 1),
-      supabase.from('abschreibungen').select('*').range(offset, offset + perPage - 1),
+      supabase
+        .from('einnahmen')
+        .select('id, title, betrag, umsatzsteuer, datum, kategorien:kategorie(name)')
+        .range(offset, offset + perPage - 1),
+      supabase
+        .from('ausgaben')
+        .select('id, title, betrag, umsatzsteuer, datum, kategorien:kategorie(name)')
+        .range(offset, offset + perPage - 1),
+      supabase
+        .from('abschreibungen')
+        .select('id, name, kosten, start_datum, kategorien:kategorie(name)')
+        .range(offset, offset + perPage - 1),
     ]);
 
     const entries: Entry[] = [];
 
-    (einnahmenRes.data || []).forEach(e => entries.push({
-      id: e.id,
-      title: e.title,
-      betrag: Number(e.betrag),
-      umsatzsteuer: Number(e.umsatzsteuer),
-      datum: e.datum,
-      kategorie: e.kategorie,
-      type: 'profit'
-    }));
+    (einnahmenRes.data || []).forEach(e =>
+      entries.push({
+        id: e.id,
+        title: e.title,
+        betrag: Number(e.betrag),
+        umsatzsteuer: Number(e.umsatzsteuer),
+        datum: e.datum,
+        kategorie: e.kategorien?.name || '-', // ✅ читаем из вложенного объекта
+        type: 'profit',
+      })
+    );
 
-    (ausgabenRes.data || []).forEach(e => entries.push({
-      id: e.id,
-      title: e.title,
-      betrag: Number(e.betrag),
-      umsatzsteuer: Number(e.umsatzsteuer),
-      datum: e.datum,
-      kategorie: e.kategorie,
-      type: 'loss'
-    }));
+    (ausgabenRes.data || []).forEach(e =>
+      entries.push({
+        id: e.id,
+        title: e.title,
+        betrag: Number(e.betrag),
+        umsatzsteuer: Number(e.umsatzsteuer),
+        datum: e.datum,
+        kategorie: e.kategorien?.name || '-',
+        type: 'loss',
+      })
+    );
 
-    (abschreibungenRes.data || []).forEach(e => entries.push({
-      id: e.id,
-      title: e.name,
-      betrag: Number(e.kosten),
-      umsatzsteuer: 0,
-      datum: e.start_datum,
-      kategorie: e.kategorie,
-      type: 'amortization'
-    }));
+    (abschreibungenRes.data || []).forEach(e =>
+      entries.push({
+        id: e.id,
+        title: e.name,
+        betrag: Number(e.kosten),
+        umsatzsteuer: 0,
+        datum: e.start_datum,
+        kategorie: e.kategorien?.name || '-',
+        type: 'amortization',
+      })
+    );
 
     return {
       entries,
-      total: 456 // пока временно фиксированное значение
+      total: 456, // временно
     };
   }
 );
+
+
+
 
 const entriesSlice = createSlice({
   name: 'entries',
