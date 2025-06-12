@@ -40,9 +40,15 @@ function ExpensesTable() {
   const dispatch = useAppDispatch();
   const { entries, page } = useAppSelector(state => state.entries);
 
+  const entriesPerPage = 10;
+  const paginatedEntries = entries.slice(
+    (page - 1) * entriesPerPage,
+    page * entriesPerPage
+  );
+
   useEffect(() => {
-    dispatch(fetchEntries(page));
-  }, [dispatch, page]);
+    dispatch(fetchEntries());
+  }, [dispatch]);
 
   return (
     <TableContainer component={Paper}>
@@ -58,7 +64,7 @@ function ExpensesTable() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {entries.map((row) => (
+          {paginatedEntries.map((row) => (
             <StyledTableRow key={row.id}>
               <StyledTableCell component="th" scope="row">
                 <TableCellTitle title={row.title} type={row.type} />

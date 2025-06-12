@@ -23,7 +23,9 @@ function TableSection() {
       </div>
       <ExpensesTable />
       <div className=" flex mt-7 justify-between">
-        <p className="text-lg">10 of 456 items</p>
+        <p className="text-lg">
+          {`${(page - 1) * 10 + 1}–${Math.min(page * 10, totalCount)} of ${totalCount} items`}
+        </p>
         <Pagination
           // count={10}
           count={pageCount}
