@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type {PayloadAction} from '@reduxjs/toolkit';
 import { supabase } from '../supabase/client';
+import dayjs from 'dayjs';
 
 type EntryType = 'profit' | 'loss' | 'amortization';
 
@@ -33,13 +34,16 @@ export const fetchEntries = createAsyncThunk(
   'entries/fetchEntries',
   async () => {
 
-    const [einnahmenRes, ausgabenRes] = await Promise.all([
+    const [einnahmenRes, ausgabenRes, abschreibungenRes] = await Promise.all([
       supabase
         .from('einnahmen')
         .select('id, title, betrag, umsatzsteuer, datum, kategorien:kategorie(name)'),
       supabase
         .from('ausgaben')
-        .select('id, title, betrag, umsatzsteuer, datum, kategorien:kategorie(name)')
+        .select('id, title, betrag, umsatzsteuer, datum, kategorien:kategorie(name)'),
+        supabase
+        .from('abschreibungen')
+        .select('id, name, dauer ,kosten, start_datum, kategorien:kategorie(name)')
     ]);
 
     const entries: Entry[] = [];
@@ -67,6 +71,25 @@ export const fetchEntries = createAsyncThunk(
         type: 'loss',
       })
     );
+
+    (abschreibungenRes.data || []).forEach(e => {
+  const monatlicherBetrag = Number(e.kosten) / e.dauer;
+  const start = dayjs(e.start_datum);
+
+  for (let i = 0; i < e.dauer; i++) {
+    const datum = start.add(i, 'month').format('YYYY-MM-DD');
+
+    entries.push({
+      id: `${e.id}-${i}`, // уникальный id
+      title: e.name,
+      betrag: -Number(monatlicherBetrag.toFixed(2)),
+      umsatzsteuer: 0,
+      datum,
+      kategorie: e.kategorien?.name || '-',
+      type: 'amortization',
+    });
+  }
+});
 
     entries.sort((a, b) => new Date(b.datum).getTime() - new Date(a.datum).getTime());
 
