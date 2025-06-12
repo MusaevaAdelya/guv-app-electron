@@ -28,25 +28,18 @@ const initialState: EntriesState = {
   loading: false,
 };
 
+
 export const fetchEntries = createAsyncThunk(
   'entries/fetchEntries',
-  async (page: number = 1) => {
-    const perPage = 10;
-    const offset = (page - 1) * perPage;
+  async () => {
 
-    const [einnahmenRes, ausgabenRes, abschreibungenRes] = await Promise.all([
+    const [einnahmenRes, ausgabenRes] = await Promise.all([
       supabase
         .from('einnahmen')
-        .select('id, title, betrag, umsatzsteuer, datum, kategorien:kategorie(name)')
-        .range(offset, offset + perPage - 1),
+        .select('id, title, betrag, umsatzsteuer, datum, kategorien:kategorie(name)'),
       supabase
         .from('ausgaben')
         .select('id, title, betrag, umsatzsteuer, datum, kategorien:kategorie(name)')
-        .range(offset, offset + perPage - 1),
-      supabase
-        .from('abschreibungen')
-        .select('id, name, kosten, start_datum, kategorien:kategorie(name)')
-        .range(offset, offset + perPage - 1),
     ]);
 
     const entries: Entry[] = [];
@@ -58,7 +51,7 @@ export const fetchEntries = createAsyncThunk(
         betrag: Number(e.betrag),
         umsatzsteuer: Number(e.umsatzsteuer),
         datum: e.datum,
-        kategorie: e.kategorien?.name || '-', // ✅ читаем из вложенного объекта
+        kategorie: e.kategorien?.name || '-',
         type: 'profit',
       })
     );
@@ -67,7 +60,7 @@ export const fetchEntries = createAsyncThunk(
       entries.push({
         id: e.id,
         title: e.title,
-        betrag: Number(e.betrag),
+        betrag: -Number(e.betrag),
         umsatzsteuer: Number(e.umsatzsteuer),
         datum: e.datum,
         kategorie: e.kategorien?.name || '-',
@@ -75,26 +68,14 @@ export const fetchEntries = createAsyncThunk(
       })
     );
 
-    (abschreibungenRes.data || []).forEach(e =>
-      entries.push({
-        id: e.id,
-        title: e.name,
-        betrag: Number(e.kosten),
-        umsatzsteuer: 0,
-        datum: e.start_datum,
-        kategorie: e.kategorien?.name || '-',
-        type: 'amortization',
-      })
-    );
+    entries.sort((a, b) => new Date(b.datum).getTime() - new Date(a.datum).getTime());
 
     return {
       entries,
-      total: 456, // временно
+      total: entries.length, // ← теперь реальный totalCount
     };
   }
 );
-
-
 
 
 const entriesSlice = createSlice({
