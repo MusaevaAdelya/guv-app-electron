@@ -6,13 +6,14 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { TrashIcon } from "@heroicons/react/24/outline";
 import TableCellTitle from "./TableCellTitle";
 import TableCellCategory from "./TableCellCategory";
 import { useAppDispatch, useAppSelector } from '../redux/store';
 import { useEffect } from 'react';
 import { fetchEntries } from '../redux/entriesSlice';
 import dayjs from 'dayjs';
+import { deleteEntry } from '../redux/entriesSlice';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -50,6 +51,8 @@ function ExpensesTable() {
     dispatch(fetchEntries());
   }, [dispatch]);
 
+  console.log(entries)
+
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 700 }} aria-label="customized table">
@@ -77,8 +80,7 @@ function ExpensesTable() {
               <StyledTableCell align="right">{dayjs(row.datum).format('DD.MM.YYYY')}</StyledTableCell>
               <StyledTableCell align="right">
                 <div className="flex gap-4 justify-end">
-                  <PencilIcon className="w-6 cursor-pointer hover:text-purple-500" />
-                  <TrashIcon className="w-6 cursor-pointer hover:text-rose-500" />
+                  {row.type!=="amortization" && (<TrashIcon className="w-6 cursor-pointer hover:text-rose-500" onClick={() => dispatch(deleteEntry(row))} />)}
                 </div>
               </StyledTableCell>
             </StyledTableRow>
