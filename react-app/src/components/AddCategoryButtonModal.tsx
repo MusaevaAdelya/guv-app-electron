@@ -11,7 +11,9 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import type { SelectChangeEvent } from "@mui/material/Select";
+import { supabase } from "../supabase/client";
+import { showSnackbar } from "../redux/snackbarSlice";
+import { useAppDispatch } from "../redux/store";
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -24,26 +26,51 @@ const Transition = React.forwardRef(function Transition(
 
 function AddCategoryButtonModal() {
   const [open, setOpen] = React.useState(false);
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
+  const [type, setType] = React.useState("einnahmen");
+  const [name, setName] = React.useState("");
+  const dispatch = useAppDispatch();
 
   const handleClose = () => {
     setOpen(false);
   };
 
-  const [age, setAge] = React.useState("");
+  const handleSubmit = async () => {
+    try {
+      const { error } = await supabase.from("kategorien").insert([
+        {
+          name,
+          type,
+        },
+      ]);
 
-  const handleChange = (event: SelectChangeEvent) => {
-    setAge(event.target.value);
+      if (error) {
+      throw new Error(error.message);
+    }
+
+      setName("");
+      setType("einnahmen");
+      setOpen(false);
+      dispatch(
+        showSnackbar({
+          message: "New record was successfuly added",
+          severity: "success",
+        })
+      );
+    } catch (err) {
+      console.error("❌ Could not add category:", err);
+      dispatch(
+        showSnackbar({ message: "Failed to add category", severity: "error" })
+      );
+    }
   };
 
   return (
     <>
       <button
         className="text-white bg-black py-2 px-4 rounded-2xl font-bold cursor-pointer"
-        onClick={handleClickOpen}
+        onClick={() => {
+          setOpen(true);
+        }}
       >
         <AddIcon />
         <span className="ml-2">Add Category</span>
@@ -66,28 +93,25 @@ function AddCategoryButtonModal() {
         <DialogContent>
           <div className="flex flex-col gap-6">
             <FormControl variant="standard" sx={{}}>
-              <InputLabel id="demo-simple-select-standard-label">
-                Type
-              </InputLabel>
+              <InputLabel id="type-label">Type</InputLabel>
               <Select
-                labelId="demo-simple-select-standard-label"
-                id="demo-simple-select-standard"
-                value={age}
-                onChange={handleChange}
-                label="Age"
+                labelId="type-label"
+                value={type}
+                onChange={(e) => setType(e.target.value)}
                 required
               >
-                <MenuItem value={10}>Income</MenuItem>
-                <MenuItem value={20}>Outcome</MenuItem>
+                <MenuItem value="einnahmen">Einnahmen</MenuItem>
+                <MenuItem value="ausgaben">Ausgaben</MenuItem>
+                <MenuItem value="abschreibungen">Abschreibungen</MenuItem>
               </Select>
             </FormControl>
             <TextField
-              id="standard-basic"
               label="Name"
               variant="standard"
               fullWidth
+              value={name}
+              onChange={(e) => setName(e.target.value)}
             />
-            
           </div>
         </DialogContent>
         <DialogActions>
@@ -98,7 +122,7 @@ function AddCategoryButtonModal() {
             Discharge
           </button>
           <button
-            onClick={handleClose}
+            onClick={handleSubmit}
             className="bg-accent py-2 px-4 rounded-lg cursor-pointer"
           >
             Submit

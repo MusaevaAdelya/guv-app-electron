@@ -31,6 +31,7 @@ const initialState: EntriesState = {
   searchQuery: "",
 };
 
+
 export const fetchEntries = createAsyncThunk(
   "entries/fetchEntries",
   async () => {
@@ -128,6 +129,35 @@ export const deleteEntry = createAsyncThunk(
     if (error) throw error;
 
     return entry.id;
+  }
+);
+
+export const addEntry = createAsyncThunk(
+  'entries/addEntry',
+  async (
+    data: {
+      type: "einnahmen" | "ausgaben";
+      title: string;
+      betrag: number;
+      umsatzsteuer: number;
+      datum: string;
+      kategorie: string;
+    },
+    { dispatch }
+  ) => {
+    const { error } = await supabase.from(data.type).insert([
+      {
+        title: data.title,
+        betrag: data.betrag,
+        umsatzsteuer: data.umsatzsteuer,
+        datum: data.datum,
+        kategorie: data.kategorie,
+      },
+    ]);
+
+    if (error) throw error;
+
+    dispatch(fetchEntries());
   }
 );
 
