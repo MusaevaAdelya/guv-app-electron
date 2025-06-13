@@ -6,13 +6,14 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { TrashIcon } from "@heroicons/react/24/outline";
 import TableCellTitle from "./TableCellTitle";
 import TableCellCategory from "./TableCellCategory";
-import { useAppDispatch, useAppSelector } from '../redux/store';
+import { useAppDispatch } from '../redux/store';
 import { useEffect } from 'react';
-import { fetchEntries } from '../redux/entriesSlice';
+import { fetchEntries,deleteEntry } from '../redux/entriesSlice';
 import dayjs from 'dayjs';
+import type { Entry } from '../redux/entriesSlice';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -35,16 +36,17 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
+type ExpensesTableProps = {
+  rows: Entry[];
+};
 
-function ExpensesTable() {
+
+function ExpensesTable({ rows }: ExpensesTableProps) {
   const dispatch = useAppDispatch();
-  const { entries, page } = useAppSelector(state => state.entries);
-  const entriesPerPage = 10;
 
-  const paginatedEntries = entries.slice(
-    (page - 1) * entriesPerPage,
-    page * entriesPerPage
-  );
+  useEffect(() => {
+    dispatch(fetchEntries());
+  }, [dispatch]);
 
   return (
     <TableContainer component={Paper}>
@@ -60,7 +62,7 @@ function ExpensesTable() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {paginatedEntries.map((row) => (
+          {rows.map((row) => (
             <StyledTableRow key={row.id}>
               <StyledTableCell component="th" scope="row">
                 <TableCellTitle title={row.title} type={row.type} />
@@ -73,8 +75,7 @@ function ExpensesTable() {
               <StyledTableCell align="right">{dayjs(row.datum).format('DD.MM.YYYY')}</StyledTableCell>
               <StyledTableCell align="right">
                 <div className="flex gap-4 justify-end">
-                  <PencilIcon className="w-6 cursor-pointer hover:text-purple-500" />
-                  <TrashIcon className="w-6 cursor-pointer hover:text-rose-500" />
+                  {row.type!=="amortization" && (<TrashIcon className="w-6 cursor-pointer hover:text-rose-500" onClick={() => dispatch(deleteEntry(row))} />)}
                 </div>
               </StyledTableCell>
             </StyledTableRow>
