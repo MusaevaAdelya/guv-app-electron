@@ -5,15 +5,22 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import Slide from "@mui/material/Slide";
 import type { TransitionProps } from "@mui/material/transitions";
-import * as React from "react";
+import { useState, forwardRef, useEffect } from "react";
 import { TextField } from "@mui/material";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import type { SelectChangeEvent } from "@mui/material/Select";
+import { addEntry } from "../redux/entriesSlice";
+import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { useAppDispatch, useAppSelector } from "../redux/store";
+import dayjs from "dayjs";
+import { fetchCategoriesByType } from "../redux/categoriesSlice";
 
-const Transition = React.forwardRef(function Transition(
+const Transition = forwardRef(function Transition(
   props: TransitionProps & {
     children: React.ReactElement;
   },
@@ -23,7 +30,15 @@ const Transition = React.forwardRef(function Transition(
 });
 
 function AddRecordButtonModal() {
-  const [open, setOpen] = React.useState(false);
+  const dispatch = useAppDispatch();
+  const { list: categories } = useAppSelector((state) => state.categories);
+  const [open, setOpen] = useState(false);
+  const [type, setType] = useState("einnahmen");
+  const [category, setCategory] = useState("");
+  const [title, setTitle] = useState("");
+  const [amount, setAmount] = useState("");
+  const [tax, setTax] = useState("");
+  const [date, setDate] = useState<any>(null);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -33,11 +48,45 @@ function AddRecordButtonModal() {
     setOpen(false);
   };
 
-  const [age, setAge] = React.useState("");
-
-  const handleChange = (event: SelectChangeEvent) => {
-    setAge(event.target.value);
+  const handleSubmit = async () => {
+    try {
+      await dispatch(
+        addEntry({
+          type: type as "einnahmen" | "ausgaben",
+          title,
+          betrag: Number(amount),
+          umsatzsteuer: Number(tax),
+          datum: dayjs(date).format("YYYY-MM-DD"),
+          kategorie: category,
+        })
+      ).unwrap();
+      setOpen(false);
+      setTitle("");
+      setAmount("");
+      setTax("");
+      setCategory("");
+      setType("einnahmen");
+      setDate(null);
+    } catch (err) {
+      console.error("❌ Could not add record:", err);
+      console.log({
+        type: type as "einnahmen" | "ausgaben",
+        title,
+        betrag: Number(amount),
+        umsatzsteuer: Number(tax),
+        datum: dayjs(date).format("YYYY-MM-DD"),
+        kategorie: category,
+      });
+      alert("Failed to add record");
+    }
   };
+
+  useEffect(() => {
+    if (type) {
+      dispatch(fetchCategoriesByType(type));
+      setCategory("");
+    }
+  }, [type, dispatch]);
 
   return (
     <>
@@ -65,36 +114,41 @@ function AddRecordButtonModal() {
         <DialogTitle>{"Add a new expense record"}</DialogTitle>
         <DialogContent>
           <div className="flex flex-col gap-6 mt-4">
-            <FormControl variant="outlined" sx={{}}>
+            <TextField
+              label="Title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              variant="outlined"
+              fullWidth
+            />
+            <TextField
+              type="number"
+              label="Amount (€)"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              variant="outlined"
+              fullWidth
+            />
+
+            <FormControl
+              variant="outlined"
+              className="flex-1"
+              sx={{ width: "100%" }}
+            >
               <InputLabel id="demo-simple-select-standard-label">
                 Type
               </InputLabel>
               <Select
-                labelId="demo-simple-select-standard-label"
-                id="demo-simple-select-standard"
-                value={age}
-                onChange={handleChange}
-                label="Age"
-                required
+                value={type}
+                onChange={(e) => setType(e.target.value)}
+                label="Type"
               >
-                <MenuItem value={10}>Einnahmen</MenuItem>
-                <MenuItem value={20}>Ausgaben</MenuItem>
+                <MenuItem value="einnahmen">Einnahmen</MenuItem>
+                <MenuItem value="ausgaben">Ausgaben</MenuItem>
               </Select>
             </FormControl>
-            <TextField
-              id="standard-basic"
-              label="Title"
-              variant="outlined"
-              fullWidth
-            />
-            <TextField
-              id="standard-basic"
-              type="number"
-              label="Amount (€)"
-              variant="outlined"
-              fullWidth
-            />
-            <div className="flex gap-8 mb-6">
+
+            <div className="flex gap-8">
               <FormControl
                 variant="outlined"
                 className="flex-1"
@@ -104,26 +158,37 @@ function AddRecordButtonModal() {
                   Category
                 </InputLabel>
                 <Select
-                  labelId="demo-simple-select-standard-label"
-                  id="demo-simple-select-standard"
-                  value={age}
-                  onChange={handleChange}
-                  label="Age"
-                  required
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  label="Category"
                 >
-                  <MenuItem value={10}>Möbel</MenuItem>
-                  <MenuItem value={20}>Miete</MenuItem>
+                  {categories.map((cat) => (
+                    <MenuItem key={cat.id} value={cat.id}>
+                      {cat.name}
+                    </MenuItem>
+                  ))}
                 </Select>
               </FormControl>
               <TextField
-                id="standard-basic"
                 type="number"
                 label="Umsaztsteuer ($)"
                 variant="outlined"
                 className="flex-1"
                 fullWidth
+                value={tax}
+                onChange={(e) => setTax(e.target.value)}
               />
             </div>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DemoContainer components={["DatePicker"]} sx={{ flex: 1 }}>
+                <DatePicker
+                  label="Date"
+                  value={date}
+                  onChange={(value) => setDate(value)}
+                  sx={{ width: "100%" }}
+                />
+              </DemoContainer>
+            </LocalizationProvider>
           </div>
         </DialogContent>
         <DialogActions>
@@ -131,10 +196,10 @@ function AddRecordButtonModal() {
             onClick={handleClose}
             className="text-black py-2 px-4 rounded-lg hover:bg-gray-100 cursor-pointer"
           >
-            Discharge
+            Close
           </button>
           <button
-            onClick={handleClose}
+            onClick={handleSubmit}
             className="bg-accent py-2 px-4 rounded-lg cursor-pointer"
           >
             Submit

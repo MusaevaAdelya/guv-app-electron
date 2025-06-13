@@ -4,12 +4,14 @@ import { useDispatch, useSelector } from "react-redux";
 import type { TypedUseSelectorHook } from "react-redux";
 import guvReducer from './guvSlice';
 import entriesReducer from './entriesSlice';
+import categoriesReducer from './categoriesSlice';
 
 export const store = configureStore({
   reducer: {
     theme: themeReducer,
     guv:guvReducer,
     entries: entriesReducer,
+    categories: categoriesReducer,
   },
 });
 
