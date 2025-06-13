@@ -11,8 +11,9 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import type { SelectChangeEvent } from "@mui/material/Select";
 import { supabase } from "../supabase/client";
+import { showSnackbar } from "../redux/snackbarSlice";
+import { useAppDispatch } from "../redux/store";
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -27,28 +28,40 @@ function AddCategoryButtonModal() {
   const [open, setOpen] = React.useState(false);
   const [type, setType] = React.useState("einnahmen");
   const [name, setName] = React.useState("");
+  const dispatch = useAppDispatch();
 
   const handleClose = () => {
     setOpen(false);
   };
 
   const handleSubmit = async () => {
-    const { error } = await supabase.from("kategorien").insert([
-      {
-        name,
-        type,
-      },
-    ]);
+    try {
+      const { error } = await supabase.from("kategorien").insert([
+        {
+          name,
+          type,
+        },
+      ]);
 
-    if (error) {
-      console.error("❌ Failed to add category:", error.message);
-      alert("Failed to add category.");
-      return;
+      if (error) {
+      throw new Error(error.message);
     }
 
-    setName("");
-    setType("einnahmen");
-    setOpen(false);
+      setName("");
+      setType("einnahmen");
+      setOpen(false);
+      dispatch(
+        showSnackbar({
+          message: "New record was successfuly added",
+          severity: "success",
+        })
+      );
+    } catch (err) {
+      console.error("❌ Could not add category:", err);
+      dispatch(
+        showSnackbar({ message: "Failed to add category", severity: "error" })
+      );
+    }
   };
 
   return (

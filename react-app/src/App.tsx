@@ -4,14 +4,16 @@ import { createTheme, ThemeProvider } from "@mui/material";
 import ChartsSection from "./layout/ChartsSection";
 import TableSection from "./layout/TableSection";
 import Amortization from "./layout/Amortization";
+import GlobalSnackbar from "./components/GlobalSnackbar";
 
 const theme = createTheme({
   typography: {
-    fontFamily: "var(--font-base)", 
+    fontFamily: "var(--font-base)",
   },
 });
 
 function App() {
+  
   return (
     <ThemeProvider theme={theme}>
       <main className="bg-background rounded-4xl ">
@@ -19,12 +21,14 @@ function App() {
           <Header />
           <ResultSection />
         </div>
-        <ChartsSection/>
+        <ChartsSection />
         <div className="container mx-auto py-9">
-          <TableSection/>
-          <Amortization/>
+          <TableSection />
+          <Amortization />
         </div>
+        
       </main>
+      <GlobalSnackbar />
     </ThemeProvider>
   );
 }

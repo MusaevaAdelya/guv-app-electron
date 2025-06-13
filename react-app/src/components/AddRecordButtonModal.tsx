@@ -19,6 +19,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import dayjs from "dayjs";
 import { fetchCategoriesByType } from "../redux/categoriesSlice";
+import { showSnackbar } from "../redux/snackbarSlice";
 
 const Transition = forwardRef(function Transition(
   props: TransitionProps & {
@@ -67,17 +68,10 @@ function AddRecordButtonModal() {
       setCategory("");
       setType("einnahmen");
       setDate(null);
+      dispatch(showSnackbar({ message: "New record was successfuly added", severity: "success" }));
     } catch (err) {
       console.error("❌ Could not add record:", err);
-      console.log({
-        type: type as "einnahmen" | "ausgaben",
-        title,
-        betrag: Number(amount),
-        umsatzsteuer: Number(tax),
-        datum: dayjs(date).format("YYYY-MM-DD"),
-        kategorie: category,
-      });
-      alert("Failed to add record");
+      dispatch(showSnackbar({ message: "Failed to add record", severity: "error" }));
     }
   };
 
@@ -86,6 +80,7 @@ function AddRecordButtonModal() {
       dispatch(fetchCategoriesByType(type));
       setCategory("");
     }
+
   }, [type, dispatch]);
 
   return (

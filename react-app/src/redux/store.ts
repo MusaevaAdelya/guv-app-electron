@@ -5,6 +5,7 @@ import type { TypedUseSelectorHook } from "react-redux";
 import guvReducer from './guvSlice';
 import entriesReducer from './entriesSlice';
 import categoriesReducer from './categoriesSlice';
+import snackbarReducer from './snackbarSlice';
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
     guv:guvReducer,
     entries: entriesReducer,
     categories: categoriesReducer,
+    snackbar: snackbarReducer,
   },
 });
 
