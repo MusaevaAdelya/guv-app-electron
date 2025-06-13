@@ -5,22 +5,38 @@ import AddRecordButtonModal from "../components/AddRecordButtonModal";
 import AddCategoryButtonModal from "../components/AddCategoryButtonModal";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import { setPage } from "../redux/entriesSlice";
+import dayjs from "dayjs";
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
+
+const entriesPerPage = 10;
+dayjs.extend(isSameOrAfter);
+dayjs.extend(isSameOrBefore);
 
 function TableSection() {
+  
   const dispatch = useAppDispatch();
   const { page, entries, searchQuery } = useAppSelector(
     (state) => state.entries
   );
-  const entriesPerPage = 10;
+  const { from, to } = useAppSelector((state) => state.guv);
 
-  // 🔍 Фильтрация
   const filteredEntries = entries.filter((entry) => {
+    const entryDate = dayjs(entry.datum);
+    const fromDate = from ? dayjs(from) : null;
+    const toDate = to ? dayjs(to) : null;
     const query = searchQuery.toLowerCase();
-    return (
+
+    const matchesSearch =
       entry.title.toLowerCase().includes(query) ||
       entry.kategorie.toLowerCase().includes(query) ||
-      entry.betrag.toString().includes(query)
-    );
+      entry.betrag.toString().includes(query);
+
+    const matchesDate =
+      (!fromDate || entryDate.isSameOrAfter(fromDate, "day")) &&
+      (!toDate || entryDate.isSameOrBefore(toDate, "day"));
+
+    return matchesSearch && matchesDate;
   });
 
   const totalCount = filteredEntries.length;

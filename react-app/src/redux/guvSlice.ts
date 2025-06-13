@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type {PayloadAction} from '@reduxjs/toolkit';
 import type { AppDispatch } from './store';
+import dayjs from "dayjs";
 
 interface GuvState {
   from: string | null;
@@ -9,7 +10,7 @@ interface GuvState {
 
 const initialState: GuvState = {
   from: null,
-  to: null,
+  to: dayjs().toISOString()
 };
 
 const guvSlice = createSlice({
