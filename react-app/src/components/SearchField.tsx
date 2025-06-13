@@ -8,7 +8,7 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import { setSearchQuery } from "../redux/entriesSlice";
-import { ChangeEvent } from "react";
+import type { ChangeEvent } from "react";
 
 function SearchField() {
   const dispatch = useAppDispatch();

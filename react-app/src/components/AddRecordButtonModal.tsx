@@ -64,8 +64,8 @@ function AddRecordButtonModal() {
       >
         <DialogTitle>{"Add a new expense record"}</DialogTitle>
         <DialogContent>
-          <div className="flex flex-col gap-6">
-            <FormControl variant="standard" sx={{}}>
+          <div className="flex flex-col gap-6 mt-4">
+            <FormControl variant="outlined" sx={{}}>
               <InputLabel id="demo-simple-select-standard-label">
                 Type
               </InputLabel>
@@ -77,26 +77,26 @@ function AddRecordButtonModal() {
                 label="Age"
                 required
               >
-                <MenuItem value={10}>Income</MenuItem>
-                <MenuItem value={20}>Outcome</MenuItem>
+                <MenuItem value={10}>Einnahmen</MenuItem>
+                <MenuItem value={20}>Ausgaben</MenuItem>
               </Select>
             </FormControl>
             <TextField
               id="standard-basic"
               label="Title"
-              variant="standard"
+              variant="outlined"
               fullWidth
             />
             <TextField
               id="standard-basic"
               type="number"
               label="Amount (€)"
-              variant="standard"
+              variant="outlined"
               fullWidth
             />
             <div className="flex gap-8 mb-6">
               <FormControl
-                variant="standard"
+                variant="outlined"
                 className="flex-1"
                 sx={{ width: "100%" }}
               >
@@ -118,8 +118,8 @@ function AddRecordButtonModal() {
               <TextField
                 id="standard-basic"
                 type="number"
-                label="Steuer (%)"
-                variant="standard"
+                label="Umsaztsteuer ($)"
+                variant="outlined"
                 className="flex-1"
                 fullWidth
               />
