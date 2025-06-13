@@ -9,11 +9,11 @@ import Paper from "@mui/material/Paper";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import TableCellTitle from "./TableCellTitle";
 import TableCellCategory from "./TableCellCategory";
-import { useAppDispatch, useAppSelector } from '../redux/store';
+import { useAppDispatch } from '../redux/store';
 import { useEffect } from 'react';
-import { fetchEntries } from '../redux/entriesSlice';
+import { fetchEntries,deleteEntry } from '../redux/entriesSlice';
 import dayjs from 'dayjs';
-import { deleteEntry } from '../redux/entriesSlice';
+import type { Entry } from '../redux/entriesSlice';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -36,22 +36,17 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
+type ExpensesTableProps = {
+  rows: Entry[];
+};
 
-function ExpensesTable() {
+
+function ExpensesTable({ rows }: ExpensesTableProps) {
   const dispatch = useAppDispatch();
-  const { entries, page } = useAppSelector(state => state.entries);
-
-  const entriesPerPage = 10;
-  const paginatedEntries = entries.slice(
-    (page - 1) * entriesPerPage,
-    page * entriesPerPage
-  );
 
   useEffect(() => {
     dispatch(fetchEntries());
   }, [dispatch]);
-
-  console.log(entries)
 
   return (
     <TableContainer component={Paper}>
@@ -67,7 +62,7 @@ function ExpensesTable() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {paginatedEntries.map((row) => (
+          {rows.map((row) => (
             <StyledTableRow key={row.id}>
               <StyledTableCell component="th" scope="row">
                 <TableCellTitle title={row.title} type={row.type} />

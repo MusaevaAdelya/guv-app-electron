@@ -20,6 +20,7 @@ interface EntriesState {
   page: number;
   totalCount: number;
   loading: boolean;
+  searchQuery: string;
 }
 
 const initialState: EntriesState = {
@@ -27,6 +28,7 @@ const initialState: EntriesState = {
   page: 1,
   totalCount: 0,
   loading: false,
+  searchQuery: "",
 };
 
 export const fetchEntries = createAsyncThunk(
@@ -101,7 +103,7 @@ export const fetchEntries = createAsyncThunk(
 
     return {
       entries,
-      total: entries.length, // ← теперь реальный totalCount
+      total: entries.length, 
     };
   }
 );
@@ -137,6 +139,10 @@ const entriesSlice = createSlice({
     setPage: (state, action: PayloadAction<number>) => {
       state.page = action.payload;
     },
+    setSearchQuery: (state, action: PayloadAction<string>) => {
+      state.searchQuery = action.payload;
+      state.page = 1;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -160,5 +166,5 @@ const entriesSlice = createSlice({
   },
 });
 
-export const { setPage } = entriesSlice.actions;
+export const { setPage, setSearchQuery } = entriesSlice.actions;
 export default entriesSlice.reducer;
