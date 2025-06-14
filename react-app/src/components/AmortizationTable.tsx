@@ -8,14 +8,13 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { PencilIcon } from "@heroicons/react/24/outline";
-import { useAppDispatch, useAppSelector } from "../redux/store";
+import { useAppDispatch } from "../redux/store";
 import { fetchEntries } from "../redux/entriesSlice";
 import type { Entry } from "../redux/entriesSlice";
 import dayjs from "dayjs";
 
 type AmortizationTableProps = {
-  page: number;
-  itemsPerPage: number;
+  rows: Entry[];
 };
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -38,20 +37,12 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-function AmortizationTable({ page, itemsPerPage }: AmortizationTableProps) {
+function AmortizationTable({ rows }: AmortizationTableProps) {
   const dispatch = useAppDispatch();
-  const rows: Entry[] = useAppSelector((state) =>
-    state.entries.entries.filter((e) => e.type === "amortization")
-  );
 
   useEffect(() => {
     dispatch(fetchEntries());
   }, [dispatch]);
-
-  const paginatedRows = rows.slice(
-    (page - 1) * itemsPerPage,
-    page * itemsPerPage
-  );
 
   return (
     <TableContainer component={Paper}>
@@ -63,25 +54,27 @@ function AmortizationTable({ page, itemsPerPage }: AmortizationTableProps) {
             <StyledTableCell align="right">Startdatum</StyledTableCell>
             <StyledTableCell align="right">Kategorie</StyledTableCell>
             <StyledTableCell align="right">Datum</StyledTableCell>
+            <StyledTableCell align="right">Restwert</StyledTableCell>
+            <StyledTableCell align="right">Restdauer</StyledTableCell>
             <StyledTableCell align="right">Aktion</StyledTableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {paginatedRows.map((row) => (
+          {rows.map((row) => (
             <StyledTableRow key={row.id}>
-              <StyledTableCell component="th" scope="row">
-                {row.title}
-              </StyledTableCell>
-              <StyledTableCell align="right">{row.betrag}</StyledTableCell>
+              <StyledTableCell component="th" scope="row">{row.title}</StyledTableCell>
+              <StyledTableCell align="right">{Math.abs(row.betrag)} €</StyledTableCell>
               <StyledTableCell align="right">
-                {dayjs(row.datum)
-                  .subtract(Number(row.id.split("-")[1]), "month")
-                  .format("DD.MM.YYYY")}
+                {dayjs(row.start_datum).format("DD.MM.YYYY")}
               </StyledTableCell>
               <StyledTableCell align="right">{row.kategorie}</StyledTableCell>
               <StyledTableCell align="right">
                 {dayjs(row.datum).format("DD.MM.YYYY")}
               </StyledTableCell>
+              <StyledTableCell align="right">
+                {row.restwert?.toFixed(2)} €
+              </StyledTableCell>
+              <StyledTableCell align="right">{row.restdauer}</StyledTableCell>
               <StyledTableCell align="right">
                 <div className="flex gap-4 justify-end">
                   <PencilIcon className="w-6 cursor-pointer hover:text-purple-500" />

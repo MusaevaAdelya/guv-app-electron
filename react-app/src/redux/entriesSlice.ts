@@ -13,22 +13,39 @@ export interface Entry {
   datum: string;
   kategorie: string;
   type: EntryType;
+  restwert?: number;
+  restdauer?: number;
+  start_datum?: string;
 }
+
 
 interface EntriesState {
   entries: Entry[];
   page: number;
   totalCount: number;
   loading: boolean;
-  searchQuery: string;
+
 }
+
+interface AbschreibungRaw {
+  id: string;
+  name: string;
+  dauer: number;
+  kosten: number;
+  start_datum: string;
+  restwert: number;
+  restdauer: number;
+  kategorien: { name: string }[];
+}
+
+
+
 
 const initialState: EntriesState = {
   entries: [],
   page: 1,
   totalCount: 0,
-  loading: false,
-  searchQuery: "",
+  loading: false
 };
 
 
@@ -48,9 +65,7 @@ export const fetchEntries = createAsyncThunk(
         ),
       supabase
         .from("abschreibungen")
-        .select(
-          "id, name, dauer ,kosten, start_datum, kategorien:kategorie(name)"
-        ),
+        .select("id, name, dauer, kosten, start_datum, kategorien:kategorie(name)")
     ]);
 
     const entries: Entry[] = [];
@@ -79,24 +94,40 @@ export const fetchEntries = createAsyncThunk(
       })
     );
 
-    (abschreibungenRes.data || []).forEach((e) => {
+    (abschreibungenRes.data as AbschreibungRaw[] || []).forEach((e) => {
       const monatlicherBetrag = Number(e.kosten) / e.dauer;
       const start = dayjs(e.start_datum);
+      const today = dayjs();
+
+      let monthsPassed = today.diff(start, "month");
+      if (today.date() >= start.date()) {
+        monthsPassed += 1;
+      }
+
+      monthsPassed = Math.min(monthsPassed, e.dauer);
+
+      const restdauer = Math.max(0, e.dauer - monthsPassed);
+      const restwert = Math.max(0, e.kosten - monatlicherBetrag * monthsPassed);
 
       for (let i = 0; i < e.dauer; i++) {
         const datum = start.add(i, "month").format("YYYY-MM-DD");
 
         entries.push({
-          id: `${e.id}-${i}`, // уникальный id
+          id: `${e.id}-${i}`,
           title: e.name,
           betrag: -Number(monatlicherBetrag.toFixed(2)),
           umsatzsteuer: 0,
           datum,
+          start_datum: e.start_datum,
           kategorie: e.kategorien?.[0]?.name || "-",
           type: "amortization",
+          restwert: Number(restwert.toFixed(2)),
+          restdauer,
         });
       }
+
     });
+
 
     entries.sort(
       (a, b) => new Date(b.datum).getTime() - new Date(a.datum).getTime()
@@ -104,7 +135,7 @@ export const fetchEntries = createAsyncThunk(
 
     return {
       entries,
-      total: entries.length, 
+      total: entries.length,
     };
   }
 );
@@ -161,6 +192,39 @@ export const addEntry = createAsyncThunk(
   }
 );
 
+export const addAmortization = createAsyncThunk(
+  'entries/addAmortization',
+  async (
+    data: {
+      name: string;
+      kosten: number;
+      dauer: number;
+      start_datum: string;
+      kategorie: string;
+    },
+    { dispatch }
+  ) => {
+    const { error } = await supabase.from('abschreibungen').insert([
+      {
+        name: data.name,
+        kosten: data.kosten,
+        dauer: data.dauer,
+        start_datum: data.start_datum,
+        kategorie: data.kategorie,
+      },
+    ]);
+
+    if (error) {
+      console.error("❌ Fehler beim Einfügen der Amortisation:", error);
+      throw error;
+    }
+
+    dispatch(fetchEntries());
+  }
+);
+
+
+
 
 const entriesSlice = createSlice({
   name: "entries",
@@ -168,11 +232,7 @@ const entriesSlice = createSlice({
   reducers: {
     setPage: (state, action: PayloadAction<number>) => {
       state.page = action.payload;
-    },
-    setSearchQuery: (state, action: PayloadAction<string>) => {
-      state.searchQuery = action.payload;
-      state.page = 1;
-    },
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -196,5 +256,5 @@ const entriesSlice = createSlice({
   },
 });
 
-export const { setPage, setSearchQuery } = entriesSlice.actions;
+export const { setPage } = entriesSlice.actions;
 export default entriesSlice.reducer;

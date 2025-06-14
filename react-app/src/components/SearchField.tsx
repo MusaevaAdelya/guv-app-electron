@@ -6,18 +6,14 @@ import {
   IconButton,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import { useAppDispatch, useAppSelector } from "../redux/store";
-import { setSearchQuery } from "../redux/entriesSlice";
 import type { ChangeEvent } from "react";
 
-function SearchField() {
-  const dispatch = useAppDispatch();
-  const searchQuery = useAppSelector(state => state.entries.searchQuery);
+type Props = {
+  value: string;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+};
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    dispatch(setSearchQuery(e.target.value));
-  };
-
+function SearchField({ value, onChange }: Props) {
   return (
     <FormControl sx={{ width: "30ch" }} variant="outlined">
       <InputLabel htmlFor="outlined-search">Search</InputLabel>
@@ -25,8 +21,8 @@ function SearchField() {
         id="outlined-search"
         type="text"
         label="Search"
-        value={searchQuery}
-        onChange={handleChange}
+        value={value}
+        onChange={onChange}
         endAdornment={
           <InputAdornment position="end">
             <IconButton aria-label="search">
