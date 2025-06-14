@@ -62,7 +62,7 @@ export const fetchEntries = createAsyncThunk(
         betrag: Number(e.betrag),
         umsatzsteuer: Number(e.umsatzsteuer),
         datum: e.datum,
-        kategorie: e.kategorien?.name || "-",
+        kategorie: e.kategorien?.[0]?.name || "-",
         type: "profit",
       })
     );
@@ -74,7 +74,7 @@ export const fetchEntries = createAsyncThunk(
         betrag: -Number(e.betrag),
         umsatzsteuer: Number(e.umsatzsteuer),
         datum: e.datum,
-        kategorie: e.kategorien?.name || "-",
+        kategorie: e.kategorien?.[0]?.name || "-",
         type: "loss",
       })
     );
@@ -92,7 +92,7 @@ export const fetchEntries = createAsyncThunk(
           betrag: -Number(monatlicherBetrag.toFixed(2)),
           umsatzsteuer: 0,
           datum,
-          kategorie: e.kategorien?.name || "-",
+          kategorie: e.kategorien?.[0]?.name || "-",
           type: "amortization",
         });
       }
