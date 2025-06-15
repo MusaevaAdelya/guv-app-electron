@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { supabase } from "../supabase/client";
 import dayjs from "dayjs";
+import type { AppThunk, RootState } from "./store";
 
 type EntryType = "profit" | "loss" | "amortization";
 
@@ -20,7 +21,6 @@ export interface Entry {
   storniert?: boolean;
 }
 
-
 interface EntriesState {
   entries: Entry[];
   page: number;
@@ -33,8 +33,7 @@ interface EntriesState {
   categoryStatistics: {
     profitCategories: { label: string; value: number }[];
     lossCategories: { label: string; value: number }[];
-  },
-
+  };
 }
 
 interface AbschreibungRaw {
@@ -60,7 +59,6 @@ const initialState: EntriesState = {
     profitCategories: [],
     lossCategories: [],
   },
-
 };
 
 export const fetchEntries = createAsyncThunk(
@@ -79,9 +77,9 @@ export const fetchEntries = createAsyncThunk(
         ),
       supabase
         .from("abschreibungen")
-        .select("id, name, dauer, kosten, start_datum, storniert, kategorien:kategorie(name)")
-
-
+        .select(
+          "id, name, dauer, kosten, start_datum, storniert, kategorien:kategorie(name)"
+        ),
     ]);
 
     const entries: Entry[] = [];
@@ -98,8 +96,6 @@ export const fetchEntries = createAsyncThunk(
       })
     );
 
-    
-
     (ausgabenRes.data || []).forEach((e) =>
       entries.push({
         id: e.id,
@@ -112,45 +108,47 @@ export const fetchEntries = createAsyncThunk(
       })
     );
 
-    ((abschreibungenRes.data ?? []) as unknown as AbschreibungRaw[]).forEach((e) => {
-      const isStorniert = (e as any).storniert ?? false;
-      const monatlicherBetrag = Number(e.kosten) / e.dauer;
-      const start = dayjs(e.start_datum);
-      const today = dayjs();
+    ((abschreibungenRes.data ?? []) as unknown as AbschreibungRaw[]).forEach(
+      (e) => {
+        const isStorniert = (e as any).storniert ?? false;
+        const monatlicherBetrag = Number(e.kosten) / e.dauer;
+        const start = dayjs(e.start_datum);
+        const today = dayjs();
 
-      let monthsPassed = today.diff(start, "month");
-      if (today.date() >= start.date()) {
-        monthsPassed += 1;
+        let monthsPassed = today.diff(start, "month");
+        if (today.date() >= start.date()) {
+          monthsPassed += 1;
+        }
+
+        monthsPassed = Math.min(monthsPassed, e.dauer);
+
+        const restdauer = Math.max(0, e.dauer - monthsPassed);
+        const restwert = Math.max(
+          0,
+          e.kosten - monatlicherBetrag * monthsPassed
+        );
+
+        for (let i = 0; i < e.dauer; i++) {
+          const datum = start.add(i, "month").format("YYYY-MM-DD");
+
+          entries.push({
+            id: `${e.id}-${i}`,
+            originalId: e.id,
+            title: e.name,
+            betrag: -Number(monatlicherBetrag.toFixed(2)),
+            umsatzsteuer: 0,
+            datum,
+            start_datum: e.start_datum,
+            kategorie: e.kategorien?.name || "-",
+            type: "amortization",
+            restwert: Number(restwert.toFixed(2)),
+            restdauer,
+            storniert: isStorniert,
+          });
+        }
       }
+    );
 
-      monthsPassed = Math.min(monthsPassed, e.dauer);
-
-      const restdauer = Math.max(0, e.dauer - monthsPassed);
-      const restwert = Math.max(0, e.kosten - monatlicherBetrag * monthsPassed);
-
-      for (let i = 0; i < e.dauer; i++) {
-        const datum = start.add(i, "month").format("YYYY-MM-DD");
-
-        entries.push({
-          id: `${e.id}-${i}`,
-          originalId: e.id,
-          title: e.name,
-          betrag: -Number(monatlicherBetrag.toFixed(2)),
-          umsatzsteuer: 0,
-          datum,
-          start_datum: e.start_datum,
-          kategorie: e.kategorien?.name || "-",
-          type: "amortization",
-          restwert: Number(restwert.toFixed(2)),
-          restdauer,
-          storniert: isStorniert,
-
-        });
-      }
-
-    });
-
-    
     entries.sort(
       (a, b) => new Date(b.datum).getTime() - new Date(a.datum).getTime()
     );
@@ -163,21 +161,21 @@ export const fetchEntries = createAsyncThunk(
 );
 
 export const deleteEntry = createAsyncThunk(
-  'entries/deleteEntry',
+  "entries/deleteEntry",
   async (entry: Entry) => {
     let table;
     switch (entry.type) {
-      case 'profit':
-        table = 'einnahmen';
+      case "profit":
+        table = "einnahmen";
         break;
-      case 'loss':
-        table = 'ausgaben';
+      case "loss":
+        table = "ausgaben";
         break;
-      case 'amortization':
+      case "amortization":
         return null;
     }
 
-    const { error } = await supabase.from(table).delete().eq('id', entry.id);
+    const { error } = await supabase.from(table).delete().eq("id", entry.id);
     if (error) throw error;
 
     return entry.id;
@@ -185,7 +183,7 @@ export const deleteEntry = createAsyncThunk(
 );
 
 export const addEntry = createAsyncThunk(
-  'entries/addEntry',
+  "entries/addEntry",
   async (
     data: {
       type: "einnahmen" | "ausgaben";
@@ -214,7 +212,7 @@ export const addEntry = createAsyncThunk(
 );
 
 export const addAmortization = createAsyncThunk(
-  'entries/addAmortization',
+  "entries/addAmortization",
   async (
     data: {
       name: string;
@@ -225,7 +223,7 @@ export const addAmortization = createAsyncThunk(
     },
     { dispatch }
   ) => {
-    const { error } = await supabase.from('abschreibungen').insert([
+    const { error } = await supabase.from("abschreibungen").insert([
       {
         name: data.name,
         kosten: data.kosten,
@@ -257,62 +255,76 @@ export const stornoAmortization = createAsyncThunk(
   }
 );
 
-export const fetchStatistics = createAsyncThunk("entries/fetchStatistics", async () => {
-  const { data: profits, error: profitError } = await supabase
-    .from("einnahmen")
-    .select("datum, betrag")
-    .order("datum", { ascending: true });
-
-  const { data: losses, error: lossError } = await supabase
-    .from("ausgaben")
-    .select("datum, betrag")
-    .order("datum", { ascending: true });
-
-  if (profitError || lossError) throw profitError || lossError;
-
-
-  return {
-    profits: profits || [],
-    losses: (losses || []).map((e) => ({
-      ...e,
-      betrag: -Math.abs(e.betrag),
-    })),
-  };
-});
-
-export const fetchCategoryStatistics = createAsyncThunk("entries/fetchCategoryStatistics", async () => {
-  const [profitsRes, lossesRes] = await Promise.all([
-    supabase
+export const fetchStatistics = createAsyncThunk(
+  "entries/fetchStatistics",
+  async () => {
+    const { data: profits, error: profitError } = await supabase
       .from("einnahmen")
-      .select("betrag, kategorien:kategorie(name)"), // 👈 alias
-    supabase
+      .select("datum, betrag")
+      .order("datum", { ascending: true });
+
+    const { data: losses, error: lossError } = await supabase
       .from("ausgaben")
-      .select("betrag, kategorien:kategorie(name)"),
-  ]);
+      .select("datum, betrag")
+      .order("datum", { ascending: true });
 
-  if (profitsRes.error || lossesRes.error) throw profitsRes.error || lossesRes.error;
+    if (profitError || lossError) throw profitError || lossError;
 
-  const profitsByCategory: Record<string, number> = {};
-  const lossesByCategory: Record<string, number> = {};
+    return {
+      profits: profits || [],
+      losses: (losses || []).map((e) => ({
+        ...e,
+        betrag: -Math.abs(e.betrag),
+      })),
+    };
+  }
+);
 
-  (profitsRes.data as unknown as { betrag: number; kategorien?: { name: string } }[]).forEach((e) => {
-    const name = e.kategorien?.name || "-";
-    profitsByCategory[name] = (profitsByCategory[name] || 0) + e.betrag;
-  });
+export const fetchCategoryStatistics = createAsyncThunk(
+  "entries/fetchCategoryStatistics",
+  async (_, { getState }) => {
+    const state: RootState = getState();
+    const { entries } = state.entries;
+    const { from, to } = state.guv;
 
-  (lossesRes.data as unknown as { betrag: number; kategorien?: { name: string } }[]).forEach((e) => {
-    const name = e.kategorien?.name || "-";
-    lossesByCategory[name] = (lossesByCategory[name] || 0) + e.betrag;
-  });
+    const fromDate = from ? dayjs(from) : null;
+    const toDate = to ? dayjs(to) : null;
 
+    const filtered = entries.filter((entry) => {
+      const entryDate = dayjs(entry.datum);
+      const afterFrom = !fromDate || entryDate.isSameOrAfter(fromDate, "day");
+      const beforeTo = !toDate || entryDate.isSameOrBefore(toDate, "day");
+      return afterFrom && beforeTo;
+    });
 
-  return {
-    profitCategories: Object.entries(profitsByCategory).map(([label, value]) => ({ label, value })),
-    lossCategories: Object.entries(lossesByCategory).map(([label, value]) => ({ label, value })),
-  };
-});
+    const profitsByCategory: Record<string, number> = {};
+    const lossesByCategory: Record<string, number> = {};
 
+    filtered.forEach((entry) => {
+      const name = entry.kategorie || "-";
+      if (entry.type === "profit") {
+        profitsByCategory[name] = (profitsByCategory[name] || 0) + entry.betrag;
+      } else if (entry.type === "loss" || entry.type === "amortization") {
+        lossesByCategory[name] = (lossesByCategory[name] || 0) + Math.abs(entry.betrag);
+      }
+    });
 
+    const totalProfit = Object.values(profitsByCategory).reduce((sum, val) => sum + val, 0);
+    const totalLoss = Object.values(lossesByCategory).reduce((sum, val) => sum + val, 0);
+
+    const profitCategories = Object.entries(profitsByCategory).map(([label, value]) => ({
+      label,
+      value: Math.round((value / totalProfit) * 100),
+    }));
+
+    const lossCategories = Object.entries(lossesByCategory).map(([label, value]) => ({
+      label,
+      value: Math.round((value / totalLoss) * 100),
+    }));
+
+    return { profitCategories, lossCategories };
+  }
+);
 
 
 const entriesSlice = createSlice({
@@ -321,7 +333,13 @@ const entriesSlice = createSlice({
   reducers: {
     setPage: (state, action: PayloadAction<number>) => {
       state.page = action.payload;
-    }
+    },
+    setCategoryStatistics: (
+      state,
+      action: PayloadAction<EntriesState["categoryStatistics"]>
+    ) => {
+      state.categoryStatistics = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -345,16 +363,12 @@ const entriesSlice = createSlice({
 
       .addCase(deleteEntry.fulfilled, (state, action) => {
         if (action.payload) {
-          state.entries = state.entries.filter(e => e.id !== action.payload);
+          state.entries = state.entries.filter((e) => e.id !== action.payload);
           state.totalCount -= 1;
         }
       });
   },
 });
-
-
-
-
 
 export const { setPage } = entriesSlice.actions;
 export default entriesSlice.reducer;
