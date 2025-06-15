@@ -86,12 +86,14 @@ export const fetchEntries = createAsyncThunk(
     const entries: Entry[] = [];
 
     (einnahmenRes.data || []).forEach((e) =>
+      
       entries.push({
         id: e.id,
         title: e.title,
         betrag: Number(e.betrag),
         umsatzsteuer: Number(e.umsatzsteuer),
         datum: e.datum,
+        // @ts-expect-error kategorien might be null or undefined from Supabase
         kategorie: e.kategorien?.name || "-",
         type: "profit",
       })
@@ -104,6 +106,7 @@ export const fetchEntries = createAsyncThunk(
         betrag: -Number(e.betrag),
         umsatzsteuer: Number(e.umsatzsteuer),
         datum: e.datum,
+        // @ts-expect-error kategorien might be null or undefined from Supabase
         kategorie: e.kategorien?.name || "-",
         type: "loss",
       })
@@ -111,7 +114,7 @@ export const fetchEntries = createAsyncThunk(
 
     ((abschreibungenRes.data ?? []) as unknown as AbschreibungRaw[]).forEach(
       (e) => {
-        const isStorniert = (e as any).storniert ?? false;
+        const isStorniert = e.storniert ?? false; 
         const monatlicherBetrag = Number(e.kosten) / e.dauer;
         const start = dayjs(e.start_datum);
         const today = dayjs();
@@ -291,6 +294,7 @@ export const fetchStatistics = createAsyncThunk(
 export const fetchCategoryStatistics = createAsyncThunk(
   "entries/fetchCategoryStatistics",
   async (_, { getState }) => {
+    // @ts-expect-error valid cast
     const state: RootState = getState();
     const { entries } = state.entries;
     const { from, to } = state.guv;

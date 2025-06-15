@@ -1,7 +1,5 @@
-import { useEffect } from "react";
 import { LineChart, lineElementClasses } from "@mui/x-charts/LineChart";
-import { useAppDispatch, useAppSelector } from "../redux/store";
-import { fetchStatistics } from "../redux/entriesSlice";
+import { useAppSelector } from "../redux/store";
 import dayjs from "dayjs";
 
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
