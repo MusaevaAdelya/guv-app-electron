@@ -35,14 +35,9 @@ interface AbschreibungRaw {
   dauer: number;
   kosten: number;
   start_datum: string;
-  restwert: number;
-  restdauer: number;
-  kategorien: { name: string }[];
+  kategorien?: { name: string }; 
   storniert?: boolean;
 }
-
-
-
 
 const initialState: EntriesState = {
   entries: [],
@@ -69,7 +64,11 @@ export const fetchEntries = createAsyncThunk(
       supabase
         .from("abschreibungen")
         .select("id, name, dauer, kosten, start_datum, storniert, kategorien:kategorie(name)")
+
+
     ]);
+
+    console.log("abschreibungenRes.data:", abschreibungenRes.data);
 
     const entries: Entry[] = [];
 
@@ -97,7 +96,7 @@ export const fetchEntries = createAsyncThunk(
       })
     );
 
-    (abschreibungenRes.data as AbschreibungRaw[] || []).forEach((e) => {
+    ((abschreibungenRes.data ?? []) as unknown as AbschreibungRaw[]).forEach((e) => {
       const isStorniert = (e as any).storniert ?? false;
       const monatlicherBetrag = Number(e.kosten) / e.dauer;
       const start = dayjs(e.start_datum);
@@ -124,7 +123,7 @@ export const fetchEntries = createAsyncThunk(
           umsatzsteuer: 0,
           datum,
           start_datum: e.start_datum,
-          kategorie: e.kategorien?.[0]?.name || "-",
+          kategorie: e.kategorien?.name || "-",
           type: "amortization",
           restwert: Number(restwert.toFixed(2)),
           restdauer,
