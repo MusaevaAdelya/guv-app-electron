@@ -53,12 +53,12 @@ function ExpensesTable({ rows }: ExpensesTableProps) {
       <Table sx={{ minWidth: 700 }} aria-label="customized table">
         <TableHead>
           <TableRow>
-            <StyledTableCell>Title</StyledTableCell>
-            <StyledTableCell align="right">Category</StyledTableCell>
-            <StyledTableCell align="right">Amount</StyledTableCell>
-            <StyledTableCell align="right">Steuer</StyledTableCell>
+            <StyledTableCell>Titel</StyledTableCell>
+            <StyledTableCell align="right">Kategorie</StyledTableCell>
+            <StyledTableCell align="right">Betrag (€)</StyledTableCell>
+            <StyledTableCell align="right">Umsatzsteuer (€)</StyledTableCell>
             <StyledTableCell align="right">Datum</StyledTableCell>
-            <StyledTableCell align="right">Action</StyledTableCell>
+            <StyledTableCell align="right">Aktion</StyledTableCell>
           </TableRow>
         </TableHead>
         <TableBody>

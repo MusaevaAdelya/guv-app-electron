@@ -53,13 +53,14 @@ function AmortizationTable({ rows }: AmortizationTableProps) {
       <Table sx={{ minWidth: 700 }} aria-label="customized table">
         <TableHead>
           <TableRow>
-            <StyledTableCell>Name</StyledTableCell>
-            <StyledTableCell align="right">Kosten (Monat)</StyledTableCell>
-            <StyledTableCell align="right">Startdatum</StyledTableCell>
+            <StyledTableCell>Titel</StyledTableCell>
             <StyledTableCell align="right">Kategorie</StyledTableCell>
-            <StyledTableCell align="right">Datum</StyledTableCell>
-            <StyledTableCell align="right">Restwert</StyledTableCell>
-            <StyledTableCell align="right">Restdauer</StyledTableCell>
+            <StyledTableCell align="right">Gesamtkosten (€)</StyledTableCell>
+            <StyledTableCell align="right">Monatliche Kosten (€)</StyledTableCell>
+            <StyledTableCell align="right">Restwert (€)</StyledTableCell>
+            <StyledTableCell align="right">Startdatum</StyledTableCell>
+            <StyledTableCell align="right">Enddatum</StyledTableCell>
+            <StyledTableCell align="right">Restdauer (Monate)</StyledTableCell>
             <StyledTableCell align="right">Aktion</StyledTableCell>
           </TableRow>
         </TableHead>
@@ -76,20 +77,24 @@ function AmortizationTable({ rows }: AmortizationTableProps) {
                 {row.title}
               </StyledTableCell>
               <StyledTableCell align="right">
+                <TableCellCategory title={row.kategorie} type={row.type} />
+              </StyledTableCell>
+              <StyledTableCell align="right">
+                {row.gesamtKosten} €
+              </StyledTableCell>
+              <StyledTableCell align="right">
                 {Math.abs(row.betrag)} €
+              </StyledTableCell>
+              <StyledTableCell align="right">
+                {row.restwert?.toFixed(2)} €
               </StyledTableCell>
               <StyledTableCell align="right">
                 {dayjs(row.start_datum).format("DD.MM.YYYY")}
               </StyledTableCell>
               <StyledTableCell align="right">
-                <TableCellCategory title={row.kategorie} type={row.type} />
-              </StyledTableCell>
-              <StyledTableCell align="right">
                 {dayjs(row.datum).format("DD.MM.YYYY")}
               </StyledTableCell>
-              <StyledTableCell align="right">
-                {row.restwert?.toFixed(2)} €
-              </StyledTableCell>
+              
               <StyledTableCell align="right">{row.restdauer}</StyledTableCell>
               <StyledTableCell align="right">
                 <div className="flex gap-4 justify-end">

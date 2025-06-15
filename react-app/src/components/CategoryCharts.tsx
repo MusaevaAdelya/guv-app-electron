@@ -6,13 +6,17 @@ import CustomPieChart from "./CustomPieChart";
 function CategoryCharts() {
   const dispatch = useAppDispatch();
   const { categoryStatistics } = useAppSelector((state) => state.entries);
+  const { from, to } = useAppSelector((state) => state.guv);
+  const { entries } = useAppSelector((state) => state.entries);
 
   useEffect(() => {
+  if (entries.length > 0) {
     dispatch(fetchCategoryStatistics());
-  }, [dispatch]);
+  }
+}, [dispatch, entries, from, to]);
 
   return (
-    <div className="flex gap-6">
+    <div className="flex gap-6 z-10">
       <CustomPieChart
         className="flex-1"
         title="Gewinn Kategorien"
