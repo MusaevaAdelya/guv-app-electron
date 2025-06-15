@@ -4,6 +4,12 @@ import { useAppDispatch, useAppSelector } from "../redux/store";
 import { fetchStatistics } from "../redux/entriesSlice";
 import dayjs from "dayjs";
 
+import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
+import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+
+dayjs.extend(isSameOrAfter);
+dayjs.extend(isSameOrBefore);
+
 const margin = { right: 24 };
 
 type CustomLineChartProps = {
@@ -11,30 +17,36 @@ type CustomLineChartProps = {
 };
 
 function CustomLineChart({ className }: CustomLineChartProps) {
-  const dispatch = useAppDispatch();
-  const { statistics } = useAppSelector((state) => state.entries);
+  const { entries } = useAppSelector((state) => state.entries);
+  const { from, to } = useAppSelector((state) => state.guv);
 
-  useEffect(() => {
-    dispatch(fetchStatistics());
-  }, [dispatch]);
+  const fromDate = from ? dayjs(from) : null;
+  const toDate = to ? dayjs(to) : null;
 
-  const merged: Record<string, { profit: number; loss: number }> = {};
-
-  statistics?.profits?.forEach((e) => {
-    const month = dayjs(e.datum).format("MMMM");
-    merged[month] = merged[month] || { profit: 0, loss: 0 };
-    merged[month].profit += e.betrag;
+  const filtered = entries.filter((entry) => {
+    const entryDate = dayjs(entry.datum);
+    const afterFrom = !fromDate || entryDate.isSameOrAfter(fromDate, "day");
+    const beforeTo = !toDate || entryDate.isSameOrBefore(toDate, "day");
+    return afterFrom && beforeTo;
   });
 
-  statistics?.losses?.forEach((e) => {
-    const month = dayjs(e.datum).format("MMMM");
-    merged[month] = merged[month] || { profit: 0, loss: 0 };
-    merged[month].loss += Math.abs(e.betrag);
+  const groupedByMonth: Record<string, { profit: number; loss: number }> = {};
+
+  filtered.forEach((entry) => {
+    const monthKey = dayjs(entry.datum).format("YYYY-MM");
+    if (!groupedByMonth[monthKey])
+      groupedByMonth[monthKey] = { profit: 0, loss: 0 };
+
+    if (entry.type === "profit") {
+      groupedByMonth[monthKey].profit += entry.betrag;
+    } else if (entry.type === "loss" || entry.type === "amortization") {
+      groupedByMonth[monthKey].loss += Math.abs(entry.betrag);
+    }
   });
 
-  const labels = Object.keys(merged);
-  const profitData = labels.map((m) => merged[m].profit);
-  const lossData = labels.map((m) => merged[m].loss);
+  const labels = Object.keys(groupedByMonth).sort(); 
+  const profitData = labels.map((m) => groupedByMonth[m].profit);
+  const lossData = labels.map((m) => groupedByMonth[m].loss);
 
   return (
     <div className={"bg-white rounded-3xl p-3 " + className}>
@@ -45,19 +57,17 @@ function CustomLineChart({ className }: CustomLineChartProps) {
           {
             data: profitData,
             label: "Gewinn",
-            area: true,
             showMark: false,
             color: "var(--color-accent)",
           },
           {
             data: lossData,
             label: "Verlust",
-            area: true,
             showMark: false,
             color: "var(--color-accent-2)",
           },
         ]}
-        xAxis={[{ scaleType: "point", data: labels }]}
+        xAxis={[{ scaleType: "point", data: labels.map((m) => dayjs(m).format("MMMM")) }]}
         yAxis={[{ width: 50 }]}
         sx={{
           [`& .${lineElementClasses.root}`]: {
