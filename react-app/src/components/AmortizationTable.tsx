@@ -7,12 +7,13 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { TrashIcon } from "@heroicons/react/24/outline";
 import { useAppDispatch } from "../redux/store";
 import { fetchEntries } from "../redux/entriesSlice";
 import type { Entry } from "../redux/entriesSlice";
 import dayjs from "dayjs";
 import StornoAmortizationModal from "./StornoAmortizationModal";
+import TableCellCategory from "./TableCellCategory";
 
 type AmortizationTableProps = {
   rows: Entry[];
@@ -80,7 +81,9 @@ function AmortizationTable({ rows }: AmortizationTableProps) {
               <StyledTableCell align="right">
                 {dayjs(row.start_datum).format("DD.MM.YYYY")}
               </StyledTableCell>
-              <StyledTableCell align="right">{row.kategorie}</StyledTableCell>
+              <StyledTableCell align="right">
+                <TableCellCategory title={row.kategorie} type={row.type} />
+              </StyledTableCell>
               <StyledTableCell align="right">
                 {dayjs(row.datum).format("DD.MM.YYYY")}
               </StyledTableCell>
@@ -91,9 +94,8 @@ function AmortizationTable({ rows }: AmortizationTableProps) {
               <StyledTableCell align="right">
                 <div className="flex gap-4 justify-end">
                   <TrashIcon
-                    className={`w-6 cursor-pointer hover:text-rose-500 ${
-                      row.storniert ? "pointer-events-none text-gray-400" : ""
-                    }`}
+                    className={`w-6 cursor-pointer hover:text-rose-500 ${row.storniert ? "pointer-events-none text-gray-400" : ""
+                      }`}
                     onClick={() => {
                       if (row.originalId && !row.storniert) {
                         setSelectedId(row.originalId);
@@ -101,7 +103,6 @@ function AmortizationTable({ rows }: AmortizationTableProps) {
                       }
                     }}
                   />
-                  <PencilIcon className="w-6 cursor-pointer hover:text-purple-500" />
                 </div>
               </StyledTableCell>
             </StyledTableRow>
