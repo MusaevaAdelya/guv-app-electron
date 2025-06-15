@@ -7,20 +7,44 @@ type EntryType = "profit" | "loss" | "amortization";
 
 export interface Entry {
   id: string;
+  originalId?: string;
   title: string;
   betrag: number;
   umsatzsteuer: number;
   datum: string;
   kategorie: string;
   type: EntryType;
+  restwert?: number;
+  restdauer?: number;
+  start_datum?: string;
+  storniert?: boolean;
 }
+
 
 interface EntriesState {
   entries: Entry[];
   page: number;
   totalCount: number;
   loading: boolean;
-  searchQuery: string;
+  statistics: {
+    profits: { datum: string; betrag: number }[];
+    losses: { datum: string; betrag: number }[];
+  };
+  categoryStatistics: {
+    profitCategories: { label: string; value: number }[];
+    lossCategories: { label: string; value: number }[];
+  },
+
+}
+
+interface AbschreibungRaw {
+  id: string;
+  name: string;
+  dauer: number;
+  kosten: number;
+  start_datum: string;
+  kategorien?: { name: string };
+  storniert?: boolean;
 }
 
 const initialState: EntriesState = {
@@ -28,9 +52,16 @@ const initialState: EntriesState = {
   page: 1,
   totalCount: 0,
   loading: false,
-  searchQuery: "",
-};
+  statistics: {
+    profits: [],
+    losses: [],
+  },
+  categoryStatistics: {
+    profitCategories: [],
+    lossCategories: [],
+  },
 
+};
 
 export const fetchEntries = createAsyncThunk(
   "entries/fetchEntries",
@@ -48,10 +79,12 @@ export const fetchEntries = createAsyncThunk(
         ),
       supabase
         .from("abschreibungen")
-        .select(
-          "id, name, dauer ,kosten, start_datum, kategorien:kategorie(name)"
-        ),
+        .select("id, name, dauer, kosten, start_datum, storniert, kategorien:kategorie(name)")
+
+
     ]);
+
+    console.log("abschreibungenRes.data:", abschreibungenRes.data);
 
     const entries: Entry[] = [];
 
@@ -79,24 +112,44 @@ export const fetchEntries = createAsyncThunk(
       })
     );
 
-    (abschreibungenRes.data || []).forEach((e) => {
+    ((abschreibungenRes.data ?? []) as unknown as AbschreibungRaw[]).forEach((e) => {
+      const isStorniert = (e as any).storniert ?? false;
       const monatlicherBetrag = Number(e.kosten) / e.dauer;
       const start = dayjs(e.start_datum);
+      const today = dayjs();
+
+      let monthsPassed = today.diff(start, "month");
+      if (today.date() >= start.date()) {
+        monthsPassed += 1;
+      }
+
+      monthsPassed = Math.min(monthsPassed, e.dauer);
+
+      const restdauer = Math.max(0, e.dauer - monthsPassed);
+      const restwert = Math.max(0, e.kosten - monatlicherBetrag * monthsPassed);
 
       for (let i = 0; i < e.dauer; i++) {
         const datum = start.add(i, "month").format("YYYY-MM-DD");
 
         entries.push({
-          id: `${e.id}-${i}`, // уникальный id
+          id: `${e.id}-${i}`,
+          originalId: e.id,
           title: e.name,
           betrag: -Number(monatlicherBetrag.toFixed(2)),
           umsatzsteuer: 0,
           datum,
-          kategorie: e.kategorien?.[0]?.name || "-",
+          start_datum: e.start_datum,
+          kategorie: e.kategorien?.name || "-",
           type: "amortization",
+          restwert: Number(restwert.toFixed(2)),
+          restdauer,
+          storniert: isStorniert,
+
         });
       }
+
     });
+
 
     entries.sort(
       (a, b) => new Date(b.datum).getTime() - new Date(a.datum).getTime()
@@ -104,7 +157,7 @@ export const fetchEntries = createAsyncThunk(
 
     return {
       entries,
-      total: entries.length, 
+      total: entries.length,
     };
   }
 );
@@ -121,7 +174,6 @@ export const deleteEntry = createAsyncThunk(
         table = 'ausgaben';
         break;
       case 'amortization':
-        // амортизация нельзя удалить по частям (т.к. ты генерируешь их вручную)
         return null;
     }
 
@@ -161,6 +213,107 @@ export const addEntry = createAsyncThunk(
   }
 );
 
+export const addAmortization = createAsyncThunk(
+  'entries/addAmortization',
+  async (
+    data: {
+      name: string;
+      kosten: number;
+      dauer: number;
+      start_datum: string;
+      kategorie: string;
+    },
+    { dispatch }
+  ) => {
+    const { error } = await supabase.from('abschreibungen').insert([
+      {
+        name: data.name,
+        kosten: data.kosten,
+        dauer: data.dauer,
+        start_datum: data.start_datum,
+        kategorie: data.kategorie,
+      },
+    ]);
+
+    if (error) {
+      console.error("❌ Fehler beim Einfügen der Amortisation:", error);
+      throw error;
+    }
+
+    dispatch(fetchEntries());
+  }
+);
+
+export const stornoAmortization = createAsyncThunk(
+  "entries/stornoAmortization",
+  async (id: string, { rejectWithValue }) => {
+    const { error } = await supabase
+      .from("abschreibungen")
+      .update({ storniert: true }) // или другое поле для отметки
+      .eq("id", id);
+
+    if (error) return rejectWithValue(error.message);
+    return id;
+  }
+);
+
+export const fetchStatistics = createAsyncThunk("entries/fetchStatistics", async () => {
+  const { data: profits, error: profitError } = await supabase
+    .from("einnahmen")
+    .select("datum, betrag")
+    .order("datum", { ascending: true });
+
+  const { data: losses, error: lossError } = await supabase
+    .from("ausgaben")
+    .select("datum, betrag")
+    .order("datum", { ascending: true });
+
+  if (profitError || lossError) throw profitError || lossError;
+
+  return {
+    profits: profits || [],
+    losses: (losses || []).map((e) => ({
+      ...e,
+      betrag: -Math.abs(e.betrag),
+    })),
+  };
+});
+
+export const fetchCategoryStatistics = createAsyncThunk("entries/fetchCategoryStatistics", async () => {
+  const [profitsRes, lossesRes] = await Promise.all([
+    supabase
+      .from("einnahmen")
+      .select("betrag, kategorien:kategorie(name)"), // 👈 alias
+    supabase
+      .from("ausgaben")
+      .select("betrag, kategorien:kategorie(name)"),
+  ]);
+
+  if (profitsRes.error || lossesRes.error) throw profitsRes.error || lossesRes.error;
+
+  const profitsByCategory: Record<string, number> = {};
+  const lossesByCategory: Record<string, number> = {};
+
+  (profitsRes.data as unknown as { betrag: number; kategorien?: { name: string } }[]).forEach((e) => {
+    const name = e.kategorien?.name || "-";
+    profitsByCategory[name] = (profitsByCategory[name] || 0) + e.betrag;
+  });
+
+  (lossesRes.data as unknown as { betrag: number; kategorien?: { name: string } }[]).forEach((e) => {
+    const name = e.kategorien?.name || "-";
+    lossesByCategory[name] = (lossesByCategory[name] || 0) + e.betrag;
+  });
+
+
+
+  return {
+    profitCategories: Object.entries(profitsByCategory).map(([label, value]) => ({ label, value })),
+    lossCategories: Object.entries(lossesByCategory).map(([label, value]) => ({ label, value })),
+  };
+});
+
+
+
 
 const entriesSlice = createSlice({
   name: "entries",
@@ -168,11 +321,7 @@ const entriesSlice = createSlice({
   reducers: {
     setPage: (state, action: PayloadAction<number>) => {
       state.page = action.payload;
-    },
-    setSearchQuery: (state, action: PayloadAction<string>) => {
-      state.searchQuery = action.payload;
-      state.page = 1;
-    },
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -187,6 +336,13 @@ const entriesSlice = createSlice({
       .addCase(fetchEntries.rejected, (state) => {
         state.loading = false;
       })
+      .addCase(fetchStatistics.fulfilled, (state, action) => {
+        state.statistics = action.payload;
+      })
+      .addCase(fetchCategoryStatistics.fulfilled, (state, action) => {
+        state.categoryStatistics = action.payload;
+      })
+
       .addCase(deleteEntry.fulfilled, (state, action) => {
         if (action.payload) {
           state.entries = state.entries.filter(e => e.id !== action.payload);
@@ -196,5 +352,9 @@ const entriesSlice = createSlice({
   },
 });
 
-export const { setPage, setSearchQuery } = entriesSlice.actions;
+
+
+
+
+export const { setPage } = entriesSlice.actions;
 export default entriesSlice.reducer;

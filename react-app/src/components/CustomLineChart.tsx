@@ -1,54 +1,71 @@
+import { useEffect } from "react";
 import { LineChart, lineElementClasses } from "@mui/x-charts/LineChart";
+import { useAppDispatch, useAppSelector } from "../redux/store";
+import { fetchStatistics } from "../redux/entriesSlice";
+import dayjs from "dayjs";
 
 const margin = { right: 24 };
-const pData = [2400, 1398, 9800, 3908, 4800, 3800, 4300];
-const amtData = [2400, 2210, 0, 2000, 2181, 2500, 2100];
-const xLabels = [
-  "Page A",
-  "Page B",
-  "Page C",
-  "Page D",
-  "Page E",
-  "Page F",
-  "Page G",
-];
 
-type CustomLineChart={
-  className:string
-}
+type CustomLineChartProps = {
+  className: string;
+};
 
-function CustomLineChart({className}:CustomLineChart) {
+function CustomLineChart({ className }: CustomLineChartProps) {
+  const dispatch = useAppDispatch();
+  const { statistics } = useAppSelector((state) => state.entries);
+
+  useEffect(() => {
+    dispatch(fetchStatistics());
+  }, [dispatch]);
+
+  const merged: Record<string, { profit: number; loss: number }> = {};
+
+  statistics?.profits?.forEach((e) => {
+    const month = dayjs(e.datum).format("MMMM");
+    merged[month] = merged[month] || { profit: 0, loss: 0 };
+    merged[month].profit += e.betrag;
+  });
+
+  statistics?.losses?.forEach((e) => {
+    const month = dayjs(e.datum).format("MMMM");
+    merged[month] = merged[month] || { profit: 0, loss: 0 };
+    merged[month].loss += Math.abs(e.betrag);
+  });
+
+  const labels = Object.keys(merged);
+  const profitData = labels.map((m) => merged[m].profit);
+  const lossData = labels.map((m) => merged[m].loss);
+
   return (
-    <div className={"bg-white rounded-3xl p-3 "+className}>
+    <div className={"bg-white rounded-3xl p-3 " + className}>
       <p className="text-2xl ml-6 my-3">Company performance</p>
       <LineChart
         height={300}
         series={[
           {
-            data: pData,
+            data: profitData,
             label: "Gewinn",
             area: true,
             showMark: false,
-            color:"var(--color-accent)",
+            color: "var(--color-accent)",
           },
           {
-            data: amtData,
+            data: lossData,
             label: "Verlust",
             area: true,
             showMark: false,
-            color:"var(--color-accent-2)"
+            color: "var(--color-accent-2)",
           },
         ]}
-        xAxis={[{ scaleType: "point", data: xLabels, }]}
+        xAxis={[{ scaleType: "point", data: labels }]}
         yAxis={[{ width: 50 }]}
         sx={{
           [`& .${lineElementClasses.root}`]: {
             strokeWidth: 2.5,
           },
-          fontSize:"2rem"
+          fontSize: "2rem",
         }}
         margin={margin}
-        
       />
     </div>
   );
