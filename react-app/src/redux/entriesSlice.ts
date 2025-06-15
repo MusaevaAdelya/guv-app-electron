@@ -26,6 +26,14 @@ interface EntriesState {
   page: number;
   totalCount: number;
   loading: boolean;
+  statistics: {
+    profits: { datum: string; betrag: number }[];
+    losses: { datum: string; betrag: number }[];
+  };
+  categoryStatistics: {
+    profitCategories: { label: string; value: number }[];
+    lossCategories: { label: string; value: number }[];
+  },
 
 }
 
@@ -35,7 +43,7 @@ interface AbschreibungRaw {
   dauer: number;
   kosten: number;
   start_datum: string;
-  kategorien?: { name: string }; 
+  kategorien?: { name: string };
   storniert?: boolean;
 }
 
@@ -43,9 +51,17 @@ const initialState: EntriesState = {
   entries: [],
   page: 1,
   totalCount: 0,
-  loading: false
-};
+  loading: false,
+  statistics: {
+    profits: [],
+    losses: [],
+  },
+  categoryStatistics: {
+    profitCategories: [],
+    lossCategories: [],
+  },
 
+};
 
 export const fetchEntries = createAsyncThunk(
   "entries/fetchEntries",
@@ -116,7 +132,7 @@ export const fetchEntries = createAsyncThunk(
         const datum = start.add(i, "month").format("YYYY-MM-DD");
 
         entries.push({
-          id: `${e.id}-${i}`,               // для отображения уникальных записей в UI
+          id: `${e.id}-${i}`,
           originalId: e.id,
           title: e.name,
           betrag: -Number(monatlicherBetrag.toFixed(2)),
@@ -158,7 +174,6 @@ export const deleteEntry = createAsyncThunk(
         table = 'ausgaben';
         break;
       case 'amortization':
-        // амортизация нельзя удалить по частям (т.к. ты генерируешь их вручную)
         return null;
     }
 
@@ -242,6 +257,64 @@ export const stornoAmortization = createAsyncThunk(
   }
 );
 
+export const fetchStatistics = createAsyncThunk("entries/fetchStatistics", async () => {
+  const { data: profits, error: profitError } = await supabase
+    .from("einnahmen")
+    .select("datum, betrag")
+    .order("datum", { ascending: true });
+
+  const { data: losses, error: lossError } = await supabase
+    .from("ausgaben")
+    .select("datum, betrag")
+    .order("datum", { ascending: true });
+
+  if (profitError || lossError) throw profitError || lossError;
+
+  return {
+    profits: profits || [],
+    losses: (losses || []).map((e) => ({
+      ...e,
+      betrag: -Math.abs(e.betrag),
+    })),
+  };
+});
+
+export const fetchCategoryStatistics = createAsyncThunk("entries/fetchCategoryStatistics", async () => {
+  const [profitsRes, lossesRes] = await Promise.all([
+    supabase
+      .from("einnahmen")
+      .select("betrag, kategorien:kategorie(name)"), // 👈 alias
+    supabase
+      .from("ausgaben")
+      .select("betrag, kategorien:kategorie(name)"),
+  ]);
+
+  if (profitsRes.error || lossesRes.error) throw profitsRes.error || lossesRes.error;
+
+  const profitsByCategory: Record<string, number> = {};
+  const lossesByCategory: Record<string, number> = {};
+
+  (profitsRes.data as unknown as { betrag: number; kategorien?: { name: string } }[]).forEach((e) => {
+    const name = e.kategorien?.name || "-";
+    profitsByCategory[name] = (profitsByCategory[name] || 0) + e.betrag;
+  });
+
+  (lossesRes.data as unknown as { betrag: number; kategorien?: { name: string } }[]).forEach((e) => {
+    const name = e.kategorien?.name || "-";
+    lossesByCategory[name] = (lossesByCategory[name] || 0) + e.betrag;
+  });
+
+
+
+  return {
+    profitCategories: Object.entries(profitsByCategory).map(([label, value]) => ({ label, value })),
+    lossCategories: Object.entries(lossesByCategory).map(([label, value]) => ({ label, value })),
+  };
+});
+
+
+
+
 const entriesSlice = createSlice({
   name: "entries",
   initialState,
@@ -263,6 +336,13 @@ const entriesSlice = createSlice({
       .addCase(fetchEntries.rejected, (state) => {
         state.loading = false;
       })
+      .addCase(fetchStatistics.fulfilled, (state, action) => {
+        state.statistics = action.payload;
+      })
+      .addCase(fetchCategoryStatistics.fulfilled, (state, action) => {
+        state.categoryStatistics = action.payload;
+      })
+
       .addCase(deleteEntry.fulfilled, (state, action) => {
         if (action.payload) {
           state.entries = state.entries.filter(e => e.id !== action.payload);
@@ -271,6 +351,10 @@ const entriesSlice = createSlice({
       });
   },
 });
+
+
+
+
 
 export const { setPage } = entriesSlice.actions;
 export default entriesSlice.reducer;
