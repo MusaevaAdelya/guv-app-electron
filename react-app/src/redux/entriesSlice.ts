@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { supabase } from "../supabase/client";
 import dayjs from "dayjs";
-import type { AppThunk, RootState } from "./store";
+import type { RootState } from "./store";
 
 type EntryType = "profit" | "loss" | "amortization";
 
@@ -11,6 +11,7 @@ export interface Entry {
   originalId?: string;
   title: string;
   betrag: number;
+  gesamtKosten?: number;
   umsatzsteuer: number;
   datum: string;
   kategorie: string;
@@ -115,9 +116,15 @@ export const fetchEntries = createAsyncThunk(
         const start = dayjs(e.start_datum);
         const today = dayjs();
 
-        let monthsPassed = today.diff(start, "month");
-        if (today.date() >= start.date()) {
-          monthsPassed += 1;
+        let monthsPassed = 0;
+        for (let i = 0; i < e.dauer; i++) {
+          const paymentDate = dayjs(e.start_datum).add(i, "month");
+          if (
+            paymentDate.isBefore(today, "day") ||
+            paymentDate.isSame(today, "day")
+          ) {
+            monthsPassed += 1;
+          }
         }
 
         monthsPassed = Math.min(monthsPassed, e.dauer);
@@ -136,6 +143,7 @@ export const fetchEntries = createAsyncThunk(
             originalId: e.id,
             title: e.name,
             betrag: -Number(monatlicherBetrag.toFixed(2)),
+            gesamtKosten: e.kosten,
             umsatzsteuer: 0,
             datum,
             start_datum: e.start_datum,
@@ -305,27 +313,37 @@ export const fetchCategoryStatistics = createAsyncThunk(
       if (entry.type === "profit") {
         profitsByCategory[name] = (profitsByCategory[name] || 0) + entry.betrag;
       } else if (entry.type === "loss" || entry.type === "amortization") {
-        lossesByCategory[name] = (lossesByCategory[name] || 0) + Math.abs(entry.betrag);
+        lossesByCategory[name] =
+          (lossesByCategory[name] || 0) + Math.abs(entry.betrag);
       }
     });
 
-    const totalProfit = Object.values(profitsByCategory).reduce((sum, val) => sum + val, 0);
-    const totalLoss = Object.values(lossesByCategory).reduce((sum, val) => sum + val, 0);
+    const totalProfit = Object.values(profitsByCategory).reduce(
+      (sum, val) => sum + val,
+      0
+    );
+    const totalLoss = Object.values(lossesByCategory).reduce(
+      (sum, val) => sum + val,
+      0
+    );
 
-    const profitCategories = Object.entries(profitsByCategory).map(([label, value]) => ({
-      label,
-      value: Math.round((value / totalProfit) * 100),
-    }));
+    const profitCategories = Object.entries(profitsByCategory).map(
+      ([label, value]) => ({
+        label,
+        value: Math.round((value / totalProfit) * 100),
+      })
+    );
 
-    const lossCategories = Object.entries(lossesByCategory).map(([label, value]) => ({
-      label,
-      value: Math.round((value / totalLoss) * 100),
-    }));
+    const lossCategories = Object.entries(lossesByCategory).map(
+      ([label, value]) => ({
+        label,
+        value: Math.round((value / totalLoss) * 100),
+      })
+    );
 
     return { profitCategories, lossCategories };
   }
 );
-
 
 const entriesSlice = createSlice({
   name: "entries",
