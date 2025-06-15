@@ -384,6 +384,12 @@ const entriesSlice = createSlice({
           state.entries = state.entries.filter((e) => e.id !== action.payload);
           state.totalCount -= 1;
         }
+      })
+      .addCase(stornoAmortization.fulfilled, (state, action) => {
+        const id = action.payload;
+        state.entries = state.entries.map((entry) =>
+          entry.originalId === id ? { ...entry, storniert: true } : entry
+        );
       });
   },
 });
