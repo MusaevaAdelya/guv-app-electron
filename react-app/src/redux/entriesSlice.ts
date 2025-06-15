@@ -7,6 +7,7 @@ type EntryType = "profit" | "loss" | "amortization";
 
 export interface Entry {
   id: string;
+  originalId?: string;
   title: string;
   betrag: number;
   umsatzsteuer: number;
@@ -16,6 +17,7 @@ export interface Entry {
   restwert?: number;
   restdauer?: number;
   start_datum?: string;
+  storniert?: boolean;
 }
 
 
@@ -36,6 +38,7 @@ interface AbschreibungRaw {
   restwert: number;
   restdauer: number;
   kategorien: { name: string }[];
+  storniert?: boolean;
 }
 
 
@@ -65,7 +68,7 @@ export const fetchEntries = createAsyncThunk(
         ),
       supabase
         .from("abschreibungen")
-        .select("id, name, dauer, kosten, start_datum, kategorien:kategorie(name)")
+        .select("id, name, dauer, kosten, start_datum, storniert, kategorien:kategorie(name)")
     ]);
 
     const entries: Entry[] = [];
@@ -95,6 +98,7 @@ export const fetchEntries = createAsyncThunk(
     );
 
     (abschreibungenRes.data as AbschreibungRaw[] || []).forEach((e) => {
+      const isStorniert = (e as any).storniert ?? false;
       const monatlicherBetrag = Number(e.kosten) / e.dauer;
       const start = dayjs(e.start_datum);
       const today = dayjs();
@@ -113,7 +117,8 @@ export const fetchEntries = createAsyncThunk(
         const datum = start.add(i, "month").format("YYYY-MM-DD");
 
         entries.push({
-          id: `${e.id}-${i}`,
+          id: `${e.id}-${i}`,               // для отображения уникальных записей в UI
+          originalId: e.id,
           title: e.name,
           betrag: -Number(monatlicherBetrag.toFixed(2)),
           umsatzsteuer: 0,
@@ -123,6 +128,8 @@ export const fetchEntries = createAsyncThunk(
           type: "amortization",
           restwert: Number(restwert.toFixed(2)),
           restdauer,
+          storniert: isStorniert,
+
         });
       }
 
@@ -223,8 +230,18 @@ export const addAmortization = createAsyncThunk(
   }
 );
 
+export const stornoAmortization = createAsyncThunk(
+  "entries/stornoAmortization",
+  async (id: string, { rejectWithValue }) => {
+    const { error } = await supabase
+      .from("abschreibungen")
+      .update({ storniert: true }) // или другое поле для отметки
+      .eq("id", id);
 
-
+    if (error) return rejectWithValue(error.message);
+    return id;
+  }
+);
 
 const entriesSlice = createSlice({
   name: "entries",

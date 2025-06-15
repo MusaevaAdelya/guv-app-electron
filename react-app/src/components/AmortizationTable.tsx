@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -7,11 +7,12 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { PencilIcon } from "@heroicons/react/24/outline";
+import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useAppDispatch } from "../redux/store";
 import { fetchEntries } from "../redux/entriesSlice";
 import type { Entry } from "../redux/entriesSlice";
 import dayjs from "dayjs";
+import StornoAmortizationModal from "./StornoAmortizationModal";
 
 type AmortizationTableProps = {
   rows: Entry[];
@@ -39,6 +40,8 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 function AmortizationTable({ rows }: AmortizationTableProps) {
   const dispatch = useAppDispatch();
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     dispatch(fetchEntries());
@@ -61,9 +64,19 @@ function AmortizationTable({ rows }: AmortizationTableProps) {
         </TableHead>
         <TableBody>
           {rows.map((row) => (
-            <StyledTableRow key={row.id}>
-              <StyledTableCell component="th" scope="row">{row.title}</StyledTableCell>
-              <StyledTableCell align="right">{Math.abs(row.betrag)} €</StyledTableCell>
+            <StyledTableRow
+              key={row.id}
+              sx={{
+                opacity: row.storniert ? 0.4 : 1,
+                textDecoration: row.storniert ? "line-through" : "none",
+              }}
+            >
+              <StyledTableCell component="th" scope="row">
+                {row.title}
+              </StyledTableCell>
+              <StyledTableCell align="right">
+                {Math.abs(row.betrag)} €
+              </StyledTableCell>
               <StyledTableCell align="right">
                 {dayjs(row.start_datum).format("DD.MM.YYYY")}
               </StyledTableCell>
@@ -77,6 +90,17 @@ function AmortizationTable({ rows }: AmortizationTableProps) {
               <StyledTableCell align="right">{row.restdauer}</StyledTableCell>
               <StyledTableCell align="right">
                 <div className="flex gap-4 justify-end">
+                  <TrashIcon
+                    className={`w-6 cursor-pointer hover:text-rose-500 ${
+                      row.storniert ? "pointer-events-none text-gray-400" : ""
+                    }`}
+                    onClick={() => {
+                      if (row.originalId && !row.storniert) {
+                        setSelectedId(row.originalId);
+                        setModalOpen(true);
+                      }
+                    }}
+                  />
                   <PencilIcon className="w-6 cursor-pointer hover:text-purple-500" />
                 </div>
               </StyledTableCell>
@@ -84,6 +108,13 @@ function AmortizationTable({ rows }: AmortizationTableProps) {
           ))}
         </TableBody>
       </Table>
+      {selectedId && (
+        <StornoAmortizationModal
+          open={modalOpen}
+          onClose={() => setModalOpen(false)}
+          amortizationId={selectedId}
+        />
+      )}
     </TableContainer>
   );
 }
