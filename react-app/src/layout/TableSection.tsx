@@ -48,7 +48,7 @@ function TableSection() {
 
   return (
     <section className="bg-white shadow-xl min-h-[50vh] my-10 p-9 rounded-3xl">
-      <p className="text-2xl font-bold mb-5">Income and Expenses</p>
+      <p className="text-2xl font-bold mb-5">Ein- und Ausgabenübersicht</p>
 
       <div className="flex justify-between mb-7">
         <SearchField

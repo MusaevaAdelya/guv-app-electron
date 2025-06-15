@@ -48,7 +48,7 @@ function Amortization() {
 
   return (
     <section className="bg-white shadow-xl min-h-[50vh] my-10 p-9 rounded-3xl">
-      <p className="text-2xl font-bold mb-5">Amortization</p>
+      <p className="text-2xl font-bold mb-5">Abschreibungen</p>
 
       <div className="flex justify-between mb-7">
         <SearchField

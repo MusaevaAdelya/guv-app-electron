@@ -53,14 +53,14 @@ function AmortizationTable({ rows }: AmortizationTableProps) {
       <Table sx={{ minWidth: 700 }} aria-label="customized table">
         <TableHead>
           <TableRow>
-            <StyledTableCell>Name</StyledTableCell>
+            <StyledTableCell>Titel</StyledTableCell>
             <StyledTableCell align="right">Kategorie</StyledTableCell>
-            <StyledTableCell align="right">Gesamt Kosten</StyledTableCell>
-            <StyledTableCell align="right">Kosten (Monat)</StyledTableCell>
-            <StyledTableCell align="right">Restwert</StyledTableCell>
+            <StyledTableCell align="right">Gesamtkosten (€)</StyledTableCell>
+            <StyledTableCell align="right">Monatliche Kosten (€)</StyledTableCell>
+            <StyledTableCell align="right">Restwert (€)</StyledTableCell>
             <StyledTableCell align="right">Startdatum</StyledTableCell>
-            <StyledTableCell align="right">EndDatum</StyledTableCell>
-            <StyledTableCell align="right">Restdauer</StyledTableCell>
+            <StyledTableCell align="right">Enddatum</StyledTableCell>
+            <StyledTableCell align="right">Restdauer (Monate)</StyledTableCell>
             <StyledTableCell align="right">Aktion</StyledTableCell>
           </TableRow>
         </TableHead>
