@@ -84,8 +84,6 @@ export const fetchEntries = createAsyncThunk(
 
     ]);
 
-    console.log("abschreibungenRes.data:", abschreibungenRes.data);
-
     const entries: Entry[] = [];
 
     (einnahmenRes.data || []).forEach((e) =>
@@ -95,10 +93,12 @@ export const fetchEntries = createAsyncThunk(
         betrag: Number(e.betrag),
         umsatzsteuer: Number(e.umsatzsteuer),
         datum: e.datum,
-        kategorie: e.kategorien?.[0]?.name || "-",
+        kategorie: e.kategorien?.name || "-",
         type: "profit",
       })
     );
+
+    
 
     (ausgabenRes.data || []).forEach((e) =>
       entries.push({
@@ -107,7 +107,7 @@ export const fetchEntries = createAsyncThunk(
         betrag: -Number(e.betrag),
         umsatzsteuer: Number(e.umsatzsteuer),
         datum: e.datum,
-        kategorie: e.kategorien?.[0]?.name || "-",
+        kategorie: e.kategorien?.name || "-",
         type: "loss",
       })
     );
@@ -150,7 +150,7 @@ export const fetchEntries = createAsyncThunk(
 
     });
 
-
+    
     entries.sort(
       (a, b) => new Date(b.datum).getTime() - new Date(a.datum).getTime()
     );
@@ -270,6 +270,7 @@ export const fetchStatistics = createAsyncThunk("entries/fetchStatistics", async
 
   if (profitError || lossError) throw profitError || lossError;
 
+
   return {
     profits: profits || [],
     losses: (losses || []).map((e) => ({
@@ -303,7 +304,6 @@ export const fetchCategoryStatistics = createAsyncThunk("entries/fetchCategorySt
     const name = e.kategorien?.name || "-";
     lossesByCategory[name] = (lossesByCategory[name] || 0) + e.betrag;
   });
-
 
 
   return {

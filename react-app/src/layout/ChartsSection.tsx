@@ -12,7 +12,7 @@ function ChartsSections() {
       <div className="bg-black z-10 lg:-my-13 -my-1">
         <div className="container mx-auto flex lg:flex-row flex-col gap-6 z-10 py-9">
           <CustomLineChart className="flex-1 z-10" />
-          <CategoryCharts /> {/* 👈 Подключение реальных круговых диаграмм */}
+          <CategoryCharts />
         </div>
       </div>
       <img
