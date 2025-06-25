@@ -1,5 +1,7 @@
 import DatePickerGroup from "../components/DatePickerGroup";
 import Highlight from "../components/Highlight";
+import ExportToExcelButton from "../components/ExportToExcelButton";
+
 
 function Header() {
   return (
@@ -11,6 +13,8 @@ function Header() {
       <div className="self-end lg:self-auto lg:ml-auto">
         <DatePickerGroup />
       </div>
+      <ExportToExcelButton/>
+      
     </section>
   );
 }

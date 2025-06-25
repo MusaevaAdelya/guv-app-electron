@@ -1,4 +1,3 @@
-import { LineChart, lineElementClasses } from "@mui/x-charts/LineChart";
 import { useAppSelector } from "../redux/store";
 import dayjs from "dayjs";
 import { BarChart } from '@mui/x-charts/BarChart';
@@ -52,33 +51,6 @@ function CustomLineChart({ className }: CustomLineChartProps) {
       <p className="text-2xl ml-6 my-3">
         Monatliche Entwicklung von Einnahmen und Ausgaben
       </p>
-
-      {/* <LineChart
-        height={300}
-        series={[
-          {
-            data: profitData,
-            label: "Einnahmen",
-            showMark: false,
-            color: "var(--color-accent)",
-          },
-          {
-            data: lossData,
-            label: "Ausgaben",
-            showMark: false,
-            color: "var(--color-accent-2)",
-          },
-        ]}
-        xAxis={[{ scaleType: "point", data: labels.map((m) => dayjs(m).format("MMMM")) }]}
-        yAxis={[{ width: 50 }]}
-        sx={{
-          [`& .${lineElementClasses.root}`]: {
-            strokeWidth: 2.5,
-          },
-          fontSize: "2rem",
-        }}
-        margin={margin}
-      /> */}
 
       <BarChart
         height={300}
