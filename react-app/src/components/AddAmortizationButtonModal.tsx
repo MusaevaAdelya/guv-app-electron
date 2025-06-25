@@ -12,7 +12,7 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import { useAppDispatch, useAppSelector } from "../redux/store";
+import { useAppDispatch } from "../redux/store";
 import { fetchCategoriesByType } from "../redux/categoriesSlice";
 import { addAmortization } from "../redux/entriesSlice";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";

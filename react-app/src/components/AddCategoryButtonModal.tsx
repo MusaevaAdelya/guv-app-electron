@@ -119,7 +119,7 @@ function AddCategoryButtonModal() {
             onClick={handleClose}
             className="text-black py-2 px-4 rounded-lg hover:bg-gray-100 cursor-pointer"
           >
-            Discharge
+            Close
           </button>
           <button
             onClick={handleSubmit}
