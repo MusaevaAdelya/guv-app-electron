@@ -1,6 +1,7 @@
 import { LineChart, lineElementClasses } from "@mui/x-charts/LineChart";
 import { useAppSelector } from "../redux/store";
 import dayjs from "dayjs";
+import { BarChart } from '@mui/x-charts/BarChart';
 
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
@@ -42,25 +43,28 @@ function CustomLineChart({ className }: CustomLineChartProps) {
     }
   });
 
-  const labels = Object.keys(groupedByMonth).sort(); 
+  const labels = Object.keys(groupedByMonth).sort();
   const profitData = labels.map((m) => groupedByMonth[m].profit);
   const lossData = labels.map((m) => groupedByMonth[m].loss);
 
   return (
     <div className={"bg-white rounded-3xl p-3 " + className}>
-      <p className="text-2xl ml-6 my-3">Company performance</p>
-      <LineChart
+      <p className="text-2xl ml-6 my-3">
+        Monatliche Entwicklung von Einnahmen und Ausgaben
+      </p>
+
+      {/* <LineChart
         height={300}
         series={[
           {
             data: profitData,
-            label: "Gewinn",
+            label: "Einnahmen",
             showMark: false,
             color: "var(--color-accent)",
           },
           {
             data: lossData,
-            label: "Verlust",
+            label: "Ausgaben",
             showMark: false,
             color: "var(--color-accent-2)",
           },
@@ -73,6 +77,32 @@ function CustomLineChart({ className }: CustomLineChartProps) {
           },
           fontSize: "2rem",
         }}
+        margin={margin}
+      /> */}
+
+      <BarChart
+        height={300}
+        series={[
+          {
+            data: profitData,
+            label: "Einnahmen",
+            color: "var(--color-accent)",
+            id: "profitId",
+          },
+          {
+            data: lossData,
+            label: "Ausgaben",
+            color: "var(--color-accent-2)",
+            id: "lossId",
+          },
+        ]}
+        xAxis={[
+          {
+            scaleType: "band",
+            data: labels.map((m) => dayjs(m).format("MMMM")),
+          },
+        ]}
+        yAxis={[{ width: 50 }]}
         margin={margin}
       />
     </div>

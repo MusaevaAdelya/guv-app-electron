@@ -19,12 +19,12 @@ function CategoryCharts() {
     <div className="flex gap-6 z-10">
       <CustomPieChart
         className="flex-1"
-        title="Gewinn Kategorien"
+        title="Einnahmen nach Kategorie"
         data={categoryStatistics.profitCategories}
       />
       <CustomPieChart
         className="flex-1"
-        title="Verlust Kategorien"
+        title="Ausgaben nach Kategorie"
         data={categoryStatistics.lossCategories}
       />
     </div>
