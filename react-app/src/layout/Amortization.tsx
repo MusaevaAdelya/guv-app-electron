@@ -3,7 +3,7 @@ import SearchField from "../components/SearchField";
 import AmortizationTable from "../components/AmortizationTable";
 import Pagination from "@mui/material/Pagination";
 import AddAmortizationButtonModal from "../components/AddAmortizationButtonModal";
-import type {  AmortizationEntry } from "../redux/entriesSlice";
+import type { AmortizationEntry } from "../redux/entriesSlice";
 import { supabase } from "../supabase/client";
 
 const itemsPerPage = 10;
@@ -13,16 +13,15 @@ function Amortization() {
   const [page, setPage] = useState(1);
   const [entries, setEntries] = useState<AmortizationEntry[]>([]);
 
-  useEffect(() => {
-    async function fetchData() {
-      const { data, error } = await supabase
-        .from("abschreibungen")
-        .select("*, kategorien(name, type)");
+  async function fetchData() {
+    const { data, error } = await supabase
+      .from("abschreibungen")
+      .select("*, kategorien(name, type)");
 
-      if (error) {
-        console.error("Ошибка при получении данных:", error);
-      } else {
-        const transformed = data?.map((entry) => ({
+    if (error) {
+      console.error("Ошибка при получении данных:", error);
+    } else {
+      const transformed = data?.map((entry) => ({
         id: entry.id,
         dauer: entry.dauer,
         name: entry.name,
@@ -35,14 +34,12 @@ function Amortization() {
       }));
 
       setEntries(transformed || []);
-      }
     }
+  }
 
+  useEffect(() => {
     fetchData();
-    
   }, []);
-
-  
 
   // Фильтрация по поиску
   const filteredEntries = entries.filter((entry) => {
@@ -75,7 +72,7 @@ function Amortization() {
           }}
         />
         <div className="flex items-center gap-2">
-          <AddAmortizationButtonModal />
+          <AddAmortizationButtonModal onAmortizationAdded={fetchData} />
         </div>
       </div>
 

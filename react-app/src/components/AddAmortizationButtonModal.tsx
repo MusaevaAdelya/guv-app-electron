@@ -28,7 +28,7 @@ const Transition = React.forwardRef(function Transition(
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-function AddAmortizationButtonModal() {
+function AddAmortizationButtonModal({ onAmortizationAdded }: { onAmortizationAdded: () => void }) {
   const dispatch = useAppDispatch();
   const [open, setOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -81,6 +81,8 @@ function AddAmortizationButtonModal() {
           severity: "success",
         })
       );
+
+      onAmortizationAdded();
 
       handleClose();
       resetForm();
