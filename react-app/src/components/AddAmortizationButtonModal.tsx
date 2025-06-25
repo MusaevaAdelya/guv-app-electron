@@ -20,6 +20,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import dayjs from "dayjs";
 import { showSnackbar } from "../redux/snackbarSlice";
+import { supabase } from "../supabase/client";
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & { children: React.ReactElement },
@@ -38,11 +39,30 @@ function AddAmortizationButtonModal({ onAmortizationAdded }: { onAmortizationAdd
   const [kategorie, setKategorie] = useState("");
   const [startDatum, setStartDatum] = useState<dayjs.Dayjs | null>(dayjs());
 
-  const kategorien = useAppSelector((state) => state.categories.list);
+  const [kategorien, setKategorien] = useState<{ id: string; name: string }[]>([]);
 
   useEffect(() => {
     dispatch(fetchCategoriesByType("abschreibungen"));
   }, [dispatch]);
+
+  useEffect(() => {
+  async function fetchKategorien() {
+    const { data, error } = await supabase
+      .from("kategorien")
+      .select("id, name, type")
+      .eq("type", "abschreibung"); // <-- фильтрация по типу
+
+    if (error) {
+      console.error("Fehler beim Laden der Kategorien:", error);
+    } else {
+      setKategorien(data ?? []);
+      console.log("kategorien")
+      console.log(data)
+    }
+  }
+
+  fetchKategorien();
+}, []);
 
   const handleClickOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
