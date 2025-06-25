@@ -10,13 +10,13 @@ import Paper from "@mui/material/Paper";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { useAppDispatch } from "../redux/store";
 import { fetchEntries } from "../redux/entriesSlice";
-import type { Entry } from "../redux/entriesSlice";
+import type { AmortizationEntry } from "../redux/entriesSlice";
 import dayjs from "dayjs";
 import StornoAmortizationModal from "./StornoAmortizationModal";
 import TableCellCategory from "./TableCellCategory";
 
 type AmortizationTableProps = {
-  rows: Entry[];
+  rows: AmortizationEntry[];
 };
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -43,10 +43,20 @@ function AmortizationTable({ rows }: AmortizationTableProps) {
   const dispatch = useAppDispatch();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [localRows, setLocalRows] = useState(rows);
 
   useEffect(() => {
     dispatch(fetchEntries());
   }, [dispatch]);
+
+  useEffect(() => setLocalRows(rows), [rows]);
+
+  const handleStornoUpdate = (id: string) => {
+  const updated = rows.map((row) =>
+    row.id === id ? { ...row, storniert: true } : row
+  );
+  setLocalRows(updated);
+};
 
   return (
     <TableContainer component={Paper}>
@@ -56,7 +66,9 @@ function AmortizationTable({ rows }: AmortizationTableProps) {
             <StyledTableCell>Titel</StyledTableCell>
             <StyledTableCell align="right">Kategorie</StyledTableCell>
             <StyledTableCell align="right">Gesamtkosten (€)</StyledTableCell>
-            <StyledTableCell align="right">Monatliche Kosten (€)</StyledTableCell>
+            <StyledTableCell align="right">
+              Monatliche Kosten (€)
+            </StyledTableCell>
             <StyledTableCell align="right">Restwert (€)</StyledTableCell>
             <StyledTableCell align="right">Startdatum</StyledTableCell>
             <StyledTableCell align="right">Enddatum</StyledTableCell>
@@ -65,7 +77,7 @@ function AmortizationTable({ rows }: AmortizationTableProps) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
+          {localRows.map((row) => (
             <StyledTableRow
               key={row.id}
               sx={{
@@ -74,36 +86,54 @@ function AmortizationTable({ rows }: AmortizationTableProps) {
               }}
             >
               <StyledTableCell component="th" scope="row">
-                {row.title}
+                {row.name}
               </StyledTableCell>
               <StyledTableCell align="right">
                 <TableCellCategory title={row.kategorie} type={row.type} />
               </StyledTableCell>
+              <StyledTableCell align="right">{row.kosten} €</StyledTableCell>
               <StyledTableCell align="right">
-                {row.gesamtKosten} €
+                {(row.kosten / row.dauer).toFixed(2)} €
               </StyledTableCell>
               <StyledTableCell align="right">
-                {Math.abs(row.betrag)} €
-              </StyledTableCell>
-              <StyledTableCell align="right">
-                {row.restwert?.toFixed(2)} €
+                {(() => {
+                  const heute = dayjs(); // сегодняшняя дата
+                  const start = dayjs(row.start_datum);
+                  const monateVergangen = heute.diff(start, "month");
+                  const restwert = Math.max(
+                    0,
+                    row.kosten - (row.kosten / row.dauer) * monateVergangen
+                  );
+                  return restwert.toFixed(2) + " €";
+                })()}
               </StyledTableCell>
               <StyledTableCell align="right">
                 {dayjs(row.start_datum).format("DD.MM.YYYY")}
               </StyledTableCell>
               <StyledTableCell align="right">
-                {dayjs(row.datum).format("DD.MM.YYYY")}
+                {dayjs(row.start_datum)
+                  .add(row.dauer, "month")
+                  .format("DD.MM.YYYY")}
               </StyledTableCell>
-              
-              <StyledTableCell align="right">{row.restdauer}</StyledTableCell>
+
+              <StyledTableCell align="right">
+                {(() => {
+                  const heute = dayjs();
+                  const start = dayjs(row.start_datum);
+                  const monateVergangen = heute.diff(start, "month");
+                  const restdauer = Math.max(0, row.dauer - monateVergangen);
+                  return restdauer;
+                })()}
+              </StyledTableCell>
               <StyledTableCell align="right">
                 <div className="flex gap-4 justify-end">
                   <TrashIcon
-                    className={`w-6 cursor-pointer hover:text-rose-500 ${row.storniert ? "pointer-events-none text-gray-400" : ""
-                      }`}
+                    className={`w-6 cursor-pointer hover:text-rose-500 ${
+                      row.storniert ? "pointer-events-none text-gray-400" : ""
+                    }`}
                     onClick={() => {
-                      if (row.originalId && !row.storniert) {
-                        setSelectedId(row.originalId);
+                      if (row.id && !row.storniert) {
+                        setSelectedId(row.id);
                         setModalOpen(true);
                       }
                     }}
@@ -119,6 +149,7 @@ function AmortizationTable({ rows }: AmortizationTableProps) {
           open={modalOpen}
           onClose={() => setModalOpen(false)}
           amortizationId={selectedId}
+          onStorno={handleStornoUpdate}
         />
       )}
     </TableContainer>

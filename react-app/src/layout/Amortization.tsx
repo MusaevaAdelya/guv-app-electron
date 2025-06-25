@@ -1,40 +1,56 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import SearchField from "../components/SearchField";
 import AmortizationTable from "../components/AmortizationTable";
 import Pagination from "@mui/material/Pagination";
 import AddAmortizationButtonModal from "../components/AddAmortizationButtonModal";
-import { useAppSelector } from "../redux/store";
-import type { Entry } from "../redux/entriesSlice";
+import type {  AmortizationEntry } from "../redux/entriesSlice";
+import { supabase } from "../supabase/client";
 
 const itemsPerPage = 10;
 
 function Amortization() {
   const [searchQuery, setSearchQuery] = useState("");
   const [page, setPage] = useState(1);
+  const [entries, setEntries] = useState<AmortizationEntry[]>([]);
 
-  // Все амортизационные записи (включая разбиение по месяцам)
-  const amortizationEntries = useAppSelector((state) =>
-    state.entries.entries.filter((e) => e.type === "amortization")
-  );
+  useEffect(() => {
+    async function fetchData() {
+      const { data, error } = await supabase
+        .from("abschreibungen")
+        .select("*, kategorien(name, type)");
 
-  // Группировка: по ID до дефиса (например, из "uuid-0", "uuid-1" → "uuid")
-  const groupedMap = new Map<string, Entry>();
-  for (const entry of amortizationEntries) {
-    const baseId = entry.id.split("-")[0];
-    if (!groupedMap.has(baseId)) {
-      groupedMap.set(baseId, entry);
+      if (error) {
+        console.error("Ошибка при получении данных:", error);
+      } else {
+        const transformed = data?.map((entry) => ({
+        id: entry.id,
+        dauer: entry.dauer,
+        name: entry.name,
+        kosten: entry.kosten,
+        start_datum: entry.start_datum,
+        kategorie: entry.kategorien?.name ?? "",
+        type: entry.kategorien?.type ?? "",
+        storniert: entry.storniert,
+        stornierung_datum: entry.stornierung_datum,
+      }));
+
+      setEntries(transformed || []);
+      }
     }
-  }
 
-  const groupedEntries = Array.from(groupedMap.values());
+    fetchData();
+    
+  }, []);
+
+  
 
   // Фильтрация по поиску
-  const filteredEntries = groupedEntries.filter((entry) => {
+  const filteredEntries = entries.filter((entry) => {
     const query = searchQuery.toLowerCase();
     return (
-      entry.title.toLowerCase().includes(query) ||
+      entry.name.toLowerCase().includes(query) ||
       entry.kategorie.toLowerCase().includes(query) ||
-      entry.betrag.toString().includes(query)
+      entry.kosten.toString().includes(query)
     );
   });
 

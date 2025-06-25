@@ -21,12 +21,14 @@ interface StornoAmortizationModalProps {
     open: boolean;
     onClose: () => void;
     amortizationId: string | null;
+    onStorno: (id: string) => void;
 }
 
 export default function StornoAmortizationModal({
     open,
     onClose,
     amortizationId,
+    onStorno
 }: StornoAmortizationModalProps) {
     const dispatch = useAppDispatch();
     const [submitting, setSubmitting] = useState(false);
@@ -35,10 +37,9 @@ export default function StornoAmortizationModal({
         if (submitting || !amortizationId) return;
         setSubmitting(true);
 
-        console.log("🔁 Versuch zu stornieren:", amortizationId); // DEBUG лог
-
         try {
             await dispatch(stornoAmortization(amortizationId)).unwrap();
+            onStorno(amortizationId);
             dispatch(
                 showSnackbar({
                     message: "Amortisation erfolgreich storniert",

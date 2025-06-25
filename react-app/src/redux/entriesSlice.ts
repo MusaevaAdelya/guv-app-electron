@@ -22,6 +22,18 @@ export interface Entry {
   storniert?: boolean;
 }
 
+export interface AmortizationEntry {
+  id: string;
+  dauer: number;
+  name: string;
+  kosten: number;
+  start_datum: string;
+  kategorie: string;
+  type:"profit" | "loss" | "amortization";
+  storniert: boolean;
+  stornierung_datum?: string;
+}
+
 interface EntriesState {
   entries: Entry[];
   page: number;
