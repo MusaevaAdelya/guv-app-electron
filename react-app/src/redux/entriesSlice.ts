@@ -270,7 +270,7 @@ export const stornoAmortization = createAsyncThunk(
   async (id: string, { rejectWithValue }) => {
     const { error } = await supabase
       .from("abschreibungen")
-      .update({ storniert: true }) // или другое поле для отметки
+      .update({ storniert: true, stornierung_datum: dayjs().format("YYYY-MM-DD") }) // или другое поле для отметки
       .eq("id", id);
 
     if (error) return rejectWithValue(error.message);
