@@ -29,7 +29,7 @@ export interface AmortizationEntry {
   kosten: number;
   start_datum: string;
   kategorie: string;
-  type:"profit" | "loss" | "amortization";
+  type: "profit" | "loss" | "amortization";
   storniert: boolean;
   stornierung_datum?: string;
 }
@@ -57,6 +57,7 @@ interface AbschreibungRaw {
   start_datum: string;
   kategorien?: { name: string };
   storniert?: boolean;
+  stornierung_datum?:string;
 }
 
 const initialState: EntriesState = {
@@ -91,14 +92,13 @@ export const fetchEntries = createAsyncThunk(
       supabase
         .from("abschreibungen")
         .select(
-          "id, name, dauer, kosten, start_datum, storniert, kategorien:kategorie(name)"
+          "id, name, dauer, kosten, start_datum, storniert, kategorien:kategorie(name), stornierung_datum"
         ),
     ]);
 
     const entries: Entry[] = [];
 
     (einnahmenRes.data || []).forEach((e) =>
-      
       entries.push({
         id: e.id,
         title: e.title,
@@ -126,7 +126,7 @@ export const fetchEntries = createAsyncThunk(
 
     ((abschreibungenRes.data ?? []) as unknown as AbschreibungRaw[]).forEach(
       (e) => {
-        const isStorniert = e.storniert ?? false; 
+        const isStorniert = e.storniert ?? false;
         const monatlicherBetrag = Number(e.kosten) / e.dauer;
         const start = dayjs(e.start_datum);
         const today = dayjs();
@@ -151,7 +151,16 @@ export const fetchEntries = createAsyncThunk(
         );
 
         for (let i = 0; i < e.dauer; i++) {
-          const datum = start.add(i, "month").format("YYYY-MM-DD");
+          const datum = start.add(i, "month");
+          const formattedDatum = datum.format("YYYY-MM-DD");
+
+          if (
+            isStorniert &&
+            e.stornierung_datum &&
+            datum.isAfter(dayjs(e.stornierung_datum), "day")
+          ) {
+            continue;
+          }
 
           entries.push({
             id: `${e.id}-${i}`,
@@ -160,7 +169,7 @@ export const fetchEntries = createAsyncThunk(
             betrag: -Number(monatlicherBetrag.toFixed(2)),
             gesamtKosten: e.kosten,
             umsatzsteuer: 0,
-            datum,
+            datum: formattedDatum,
             start_datum: e.start_datum,
             kategorie: e.kategorien?.name || "-",
             type: "amortization",
@@ -270,7 +279,10 @@ export const stornoAmortization = createAsyncThunk(
   async (id: string, { rejectWithValue }) => {
     const { error } = await supabase
       .from("abschreibungen")
-      .update({ storniert: true, stornierung_datum: dayjs().format("YYYY-MM-DD") }) // или другое поле для отметки
+      .update({
+        storniert: true,
+        stornierung_datum: dayjs().format("YYYY-MM-DD"),
+      })
       .eq("id", id);
 
     if (error) return rejectWithValue(error.message);
