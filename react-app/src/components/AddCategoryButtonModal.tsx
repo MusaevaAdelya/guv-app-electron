@@ -102,7 +102,7 @@ function AddCategoryButtonModal() {
               >
                 <MenuItem value="einnahmen">Einnahmen</MenuItem>
                 <MenuItem value="ausgaben">Ausgaben</MenuItem>
-                <MenuItem value="abschreibung">Abschreibungen</MenuItem>
+                <MenuItem value="abschreibungen">Abschreibungen</MenuItem>
               </Select>
             </FormControl>
             <TextField

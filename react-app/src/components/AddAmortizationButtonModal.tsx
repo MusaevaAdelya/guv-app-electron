@@ -50,7 +50,7 @@ function AddAmortizationButtonModal({ onAmortizationAdded }: { onAmortizationAdd
     const { data, error } = await supabase
       .from("kategorien")
       .select("id, name, type")
-      .eq("type", "abschreibung"); // <-- фильтрация по типу
+      .eq("type", "abschreibungen"); // <-- фильтрация по типу
 
     if (error) {
       console.error("Fehler beim Laden der Kategorien:", error);
