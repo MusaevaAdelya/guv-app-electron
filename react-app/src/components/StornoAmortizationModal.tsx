@@ -6,7 +6,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import Slide from "@mui/material/Slide";
 import type { TransitionProps } from "@mui/material/transitions";
 import { showSnackbar } from "../redux/snackbarSlice";
-import { stornoAmortization } from "../redux/entriesSlice";
+import { stornoAmortization, fetchEntries } from "../redux/entriesSlice";
 import { useAppDispatch } from "../redux/store";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 
@@ -46,6 +46,7 @@ export default function StornoAmortizationModal({
                     severity: "success",
                 })
             );
+            dispatch(fetchEntries()); 
             onClose();
         } catch (err) {
             console.error("❌ Fehler:", err); // DEBUG лог
