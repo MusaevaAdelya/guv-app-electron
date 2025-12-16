@@ -13,7 +13,7 @@ const createWindow = () => {
     },
   });
 
-  win.loadURL('http://localhost:5173'); 
+  win.loadURL('https://guv-app-electron.vercel.app/'); 
 };
 
 app.whenReady().then(() => {

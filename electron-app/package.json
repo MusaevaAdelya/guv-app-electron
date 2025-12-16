@@ -4,7 +4,8 @@
   "main": "dist/main.js",
   "scripts": {
     "build": "tsc",
-    "start": "npm run build && electron ."
+    "start": "npm run build && electron .",
+    "dist": "npm run build && electron-builder"
   },
   "keywords": [],
   "author": "",
@@ -12,6 +13,21 @@
   "description": "",
   "devDependencies": {
     "electron": "^36.4.0",
+    "electron-builder": "^26.0.12",
     "typescript": "^5.8.3"
+  },
+  "build": {
+    "appId": "com.example.electronapp",
+    "productName": "ElectronApp",
+    "files": [
+      "dist/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": "nsis"
+    },
+    "directories": {
+      "output": "release"
+    }
   }
 }
